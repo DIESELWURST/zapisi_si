@@ -59,46 +59,25 @@ const HomePage = ({ pageTitle, components, setComponents, setPageTitle }) => {
   };
 
   const handleTitleChange = (e) => {
-    const newTitle = e.target.textContent;
-    setEditingTitle(newTitle);
-
+    if (!titleRef.current) return;
+    
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
-
+  
     const timeout = setTimeout(() => {
-      if (newTitle.trim() === "") {
-        setPageTitle("Untitled Page"); // Set to default če je prazno
-      } else {
-        setPageTitle(newTitle); // če pa je pa posodobi
-      }
-    }, 500); // 500ms delay
+      setPageTitle(titleRef.current.innerText.trim());
+    }, 1000);
+  
     setTypingTimeout(timeout);
   };
-
-  const handleTitleFocus = () => {
-    const position = saveCaretPosition();
-    setEditingTitle((prev) => {
-      setTimeout(() => {
-        restoreCaretPosition(position);
-      }, 100);
-      return prev;
-    });
+  
+  const handleKeyDown = (e) => {
+    if (e.key === "Backspace" && !titleRef.current.innerText) {
+      e.preventDefault();
+    }
   };
 
-  const saveCaretPosition = () => {
-    const selection = window.getSelection();
-    const range = selection.getRangeAt(0);
-    return range.getBoundingClientRect();
-  };
-
-  const restoreCaretPosition = (position) => {
-    const selection = window.getSelection();
-    const range = document.createRange();
-    range.setStart(position.node, position.offset);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  };
 
   useEffect(() => {
     setEditingTitle(pageTitle); 
@@ -166,23 +145,22 @@ const HomePage = ({ pageTitle, components, setComponents, setPageTitle }) => {
   };
 
   return (
-    <div className="flex">
-      <div className="flex-1 bg-black text-white p-6 ml-40">
-        <div
-          ref={titleRef}
-          className="pageName"
-          contentEditable
-          suppressContentEditableWarning
-          onInput={handleTitleChange} 
-          onFocus={handleTitleFocus} 
-        >
-          {editingTitle || "Untitled Page"} 
-        </div>
-
-        {components.map((component, index) => renderComponent(component, index))}
+  <div className="flex">
+    <div className=" bg-black text-white p-6 ml-40">
+      <div
+        ref={titleRef}
+        className="pageName"
+        contentEditable
+        suppressContentEditableWarning
+        onInput={handleTitleChange}
+        onKeyDown={handleKeyDown}
+      >
+        {editingTitle || "Untitled Page"}
       </div>
-    </div>
-  );
-};
 
+      {components.map((component, index) => renderComponent(component, index))}
+    </div>
+  </div>
+  );
+}
 export default HomePage;

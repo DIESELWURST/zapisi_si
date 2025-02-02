@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SideBar from "../components/sideBar";
-import HomePage from "../pages/homePage"; 
+import HomePage from "../pages/homePage";
+import RightBar from "../components/rightBar"; 
 import "../components/styles.css";
 
 const App = () => {
@@ -79,6 +80,7 @@ const App = () => {
   return (
     <div className="app-container">
       <SideBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
+      <RightBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
       <div className="flex-1">
         {currentPage ? (
           <HomePage
