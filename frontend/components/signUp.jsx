@@ -8,6 +8,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -15,16 +16,24 @@ const SignUp = () => {
   };
 
   const checkUsername = async (username) => {
-    // Check if username exists in database
-    return false;
+    try {
+      const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-exists?username=${username}`);
+      const data = await response.json();
+      return data.exists;
+    } catch (error) {
+      console.error('Error checking username:', error);
+      return false;
+    }
   };
 
   const handleSignUp = async (event) => {
     event.preventDefault();
 
+    let valid = true;
+
     if (!validateEmail(email)) {
       setEmailError('Invalid email format');
-      return;
+      valid = false;
     } else {
       setEmailError('');
     }
@@ -32,16 +41,46 @@ const SignUp = () => {
     const usernameExists = await checkUsername(username);
     if (usernameExists) {
       setUsernameError('Username already exists');
-      return;
+      valid = false;
     } else {
       setUsernameError('');
     }
 
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      setPasswordError('Passwords do not match');
+      valid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    if (!valid) {
       return;
     }
 
+    // Add new user to the database
+    try {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/add-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      if (response.ok) {
+        alert('User registered successfully');
+        setEmail('');
+        setUsername('');
+        setPassword('');
+        setConfirmPassword('');
+      } else {
+        const data = await response.json();
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+      alert('An error occurred while adding the user');
+    }
   };
 
   return (
@@ -63,29 +102,36 @@ const SignUp = () => {
           <h2>Sign Up</h2>
           <label htmlFor="username">Username:</label> <br />
           <input
-            type="text"name="username"id="username"value={username} onChange={(e) => setUsername(e.target.value)} required/> <br />
-          {usernameError && <p className="error">{usernameError}</p>}
+            type="text"name="username"id="username"val={username} onChange={(e)=> setUsername(e.target.value )} required/> <br />
+          {usernameError && <p cl sName="error">{userneError}</p>}
 
           <label htmlFor="password">Password:</label> <br />
-          <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required/> <br />
-         
-          <label htmlFor="confirmPassword">Please enter password again:</label> <br />
-          <input type="password" name="confirmPassword" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required/> <br />
+          <input             type="password"             name="password"             id="password"             value={password}             onChange={(e) => setPassword(e.target.value)}             required          /> <br />
           
+          <label htmlFor="confirmPassword">Please enter password again:</label> <br />
+          <input             type="password"             name="confirmPassword"             id="confirmPassword"             value={confirmPassword}             onChange={(e) => setConfirmPassword(e.target.value)}             required          /> <br />
+
           <label htmlFor="email">Email:</label> <br />
-          <input  type="email" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required/> <br />
+          <input
+            type="email"
+            name="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          /> <br />
           {emailError && <p className="error">{emailError}</p>}
 
           <button type="submit">Sign Up</button>
         </form>
       </div>
       <div className="bee-divider">
-            <div className="bee-line"></div>
-            <div className="bee-hexagon with-image">
-                <img src="assets/images/maja.png" alt="Bee"/>
-            </div>
-            <div className="bee-line"></div>
+        <div className="bee-line"></div>
+        <div className="bee-hexagon with-image">
+          <img src="assets/images/maja.png" alt="Bee" />
         </div>
+        <div className="bee-line"></div>
+      </div>
     </div>
   );
 };

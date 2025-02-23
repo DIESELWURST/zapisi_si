@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import TextBlock from "../components/textBlock";
-import Checklist from "../components/checkList";
-import ToggleBlock from "../components/toggleBlock";
-import "../components/styles.css";
+import TextBlock from "./textBlock";
+import Checklist from "./checkList";
+import ToggleBlock from "./toggleBlock";
+import "../styles.css";
 
 const HomePage = ({ pageTitle, components, setComponents, setPageTitle }) => {
   const [editingTitle, setEditingTitle] = useState(pageTitle);
