@@ -6,7 +6,7 @@ import CurrentPage from "./currentPage";
 import LandingPage from "./landingPage";
 import SignUp from "./signUp";
 import SignIn from "./signIn";
-import "../components/styles.css";
+import "./styles.css";
 
 const App = () => {
   const [pages, setPages] = useState([

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import Formater from "../components/Formater";
-import "../components/styles.css";
+import Formater from "./Formater";
+import "./styles.css";
 
 const Checklist = ({ items, setItems }) => {
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });

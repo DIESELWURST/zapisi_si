@@ -25,17 +25,16 @@ connection.connect((err) => {
   console.log('Connected to the MySQL database.');
 });
 
-app.get('/api/check-username', (req, res) => {
-  const { username } = req.query;
-  const query = 'SELECT 1 FROM users WHERE username = ?';
+app.get('/api/test-connection', (req, res) => {
+  const query = 'SELECT 1';
 
-  connection.query(query, [username], (err, results) => {
+  connection.query(query, (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
       res.status(500).json({ error: 'Internal server error' });
       return;
     }
-    res.json({ exists: results.length > 0 });
+    res.json({ message: 'Database connection successful', results });
   });
 });
 

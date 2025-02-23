@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import TextBlock from "./textBlock";
 import Checklist from "./checkList";
 import ToggleBlock from "./toggleBlock";
-import "../components/styles.css";
+import "./styles.css";
 
 const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => {
   const [editingTitle, setEditingTitle] = useState(pageTitle);
