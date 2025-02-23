@@ -16,7 +16,7 @@ const connection = mysql.createConnection({
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
   database: process.env.MYSQLDATABASE,
-  port: 3306
+  port: process.env.MYSQLPORT // Ensure this matches your MySQL server port
 });
 
 connection.connect((err) => {
@@ -40,7 +40,7 @@ app.get('/api/test-connection', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT||8080;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
