@@ -35,7 +35,7 @@ app.get('/api/user-exists', (req, res) => {
     return res.status(400).json({ error: 'Username is required' });
   }
 
-  const query = 'SELECT * FROM users WHERE username = ?';
+  const query = 'SELECT * FROM User WHERE username = ?';
 
   connection.query(query, [username], (err, results) => {
     if (err) {
@@ -58,7 +58,7 @@ app.post('/api/add-user', (req, res) => {
     return res.status(400).json({ error: 'Username, email, and password are required' });
   }
 
-  const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+  const query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)';
 
   connection.query(query, [username, email, password], (err, results) => {
     if (err) {
