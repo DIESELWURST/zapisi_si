@@ -10,6 +10,13 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+console.log('Environment Variables:');
+console.log('MYSQLHOST:', process.env.MYSQLHOST);
+console.log('MYSQLUSER:', process.env.MYSQLUSER);
+console.log('MYSQLPASSWORD:', process.env.MYSQLPASSWORD);
+console.log('MYSQLDATABASE:', process.env.MYSQLDATABASE);
+console.log('MYSQLPORT:', process.env.MYSQLPORT);
+console.log('PORT:', process.env.PORT);
 
 const connection = mysql.createConnection({
   host: process.env.MYSQLHOST,
