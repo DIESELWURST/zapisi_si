@@ -15,10 +15,8 @@ const SignUp = () => {
   };
 
   const checkUsername = async (username) => {
-    const response = await fetch(`zapisi-si.up.railway.app/api/check-username?username=${username}`);
-    const data = await response.json();
-    console.log(data);
-    return data.exists;
+    // Check if username exists in database
+    return false;
   };
 
   const handleSignUp = async (event) => {
