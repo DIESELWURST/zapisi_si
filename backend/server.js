@@ -31,7 +31,7 @@ app.get('/api/test-connection', (req, res) => {
   connection.query(query, (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error', details: err });
       return;
     }
     res.json({ message: 'Database connection successful', results });
