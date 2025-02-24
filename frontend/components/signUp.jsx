@@ -165,7 +165,7 @@ const SignUp = () => {
               className="toggle-password"
               onClick={() => setPasswordVisible(!passwordVisible)}
             >
-              <img src={passwordVisible ? "..\frontend\src\show-pass.png" : "..\frontend\src\hide-pass.png"} alt="Toggle visibility" />
+              <img src={passwordVisible ? "src\show-pass.png" : "src\hide-pass.png"} alt="Toggle visibility" />
             </button>
           </div>
           {passwordError && <p className="error">{passwordError}</p>}
@@ -192,7 +192,7 @@ const SignUp = () => {
               className="toggle-password"
               onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
             >
-              <img src={confirmPasswordVisible ? "..\frontend\src\show-pass.png" : "..\frontend\src\hide-pass.png"} alt="Toggle visibility" />
+              <img src={confirmPasswordVisible ? "src\show-pass.png" : "src\hide-pass.png"} alt="Toggle visibility" />
             </button>
           </div>
           <label htmlFor="email">Email:</label> <br />
