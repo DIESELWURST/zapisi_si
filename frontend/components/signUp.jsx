@@ -191,7 +191,7 @@ const SignUp = () => {
             <button
               type="button"
               className="toggle-password"
-              onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)} style= "background-color: #f1f1f1; border: none;"
+              onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)} style= {{background: '#f1f1f1', border: 'none'}}
             >
               <img src={confirmPasswordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
             </button>
