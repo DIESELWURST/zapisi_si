@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './signUp.css';
 
 const SignUp = () => {
@@ -122,100 +123,106 @@ const SignUp = () => {
 
   const passwordValidation = validatePassword(password);
 
-  return (
-    <div className='auth-container'>
-      <div className="bee-divider">
-        <div className="bee-line"></div>
-        <div className="bee-hexagon with-image">
-          <img src="assets/images/maja.png" alt="Bee" />
-        </div>
-        <div className="bee-line"></div>
+  return  (
+    <div>
+      <div className='buttons'>
+          <Link to="/signin"><button className='topbar-signin'><b>Sign in</b></button></Link>
+          <Link to="/signup"><button className='topbar-signup'><b>Sign up</b></button></Link>
       </div>
-      <div className="kontakt" id="kontakt">
+      <div className='auth-container'>
         <div className="bee-divider">
           <div className="bee-line"></div>
-          <div className="bee-hexagon"></div>
+          <div className="bee-hexagon with-image">
+            <img src="assets/images/maja.png" alt="Bee" />
+          </div>
           <div className="bee-line"></div>
         </div>
-        <form onSubmit={handleSignUp}>
-          <h2>Sign Up</h2>
-          <label htmlFor="username">Username:</label> <br />
-          <input
-            type="text"
-            name="username"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          /> <br />
-          {usernameError && <p className="error">{usernameError}</p>}
-
-          <label htmlFor="password">Password:</label> <br />
-          <div className="password-container">
-            <input
-              type={passwordVisible ? "text" : "password"}
-              name="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() => setPasswordVisible(!passwordVisible)}
-              style= {{background:' white', border: 'none',height: '20px', width: '20px' ,marginTop: '-13px'}}
-            >
-              <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
-            </button>
+        <div className="kontakt" id="kontakt">
+          <div className="bee-divider">
+            <div className="bee-line"></div>
+            <div className="bee-hexagon"></div>
+            <div className="bee-line"></div>
           </div>
-          {passwordError && <p className="error">{passwordError}</p>}
-          <ul className="password-validation">
-            <li className={passwordValidation.lengthValid ? 'valid' : 'invalid'}>At least 8 characters</li>
-            <li className={passwordValidation.uppercaseValid ? 'valid' : 'invalid'}>At least one uppercase letter</li>
-            <li className={passwordValidation.lowercaseValid ? 'valid' : 'invalid'}>At least one lowercase letter</li>
-            <li className={passwordValidation.numberValid ? 'valid' : 'invalid'}>At least one number</li>
-            <li className={passwordValidation.specialCharValid ? 'valid' : 'invalid'}>At least one special character</li>
-          </ul>
-
-          <label htmlFor="confirmPassword">Please enter password again:</label> <br />
-          <div className="password-container">
+          <form onSubmit={handleSignUp}>
+            <h2>Sign Up</h2>
+            <label htmlFor="username">Username:</label> <br />
             <input
-              type={confirmPasswordVisible ? "text" : "password"}
-              name="confirmPassword"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              type="text"
+              name="username"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
-            />
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)} style= {{background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-13px'}}
-            >
-              <img src={confirmPasswordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
-            </button>
-          </div>
-          <label htmlFor="email">Email:</label> <br />
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          /> <br />
-          {emailError && <p className="error">{emailError}</p>}
+            /> <br />
+            {usernameError && <p className="error">{usernameError}</p>}
 
-          <button type="submit">Sign Up</button>
-        </form>
-      </div>
-      <div className="bee-divider">
-        <div className="bee-line"></div>
-        <div className="bee-hexagon with-image">
-          <img src="assets/images/maja.png" alt="Bee" />
+            <label htmlFor="password">Password:</label> <br />
+            <div className="password-container">
+              <input
+                type={passwordVisible ? "text" : "password"}
+                name="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setPasswordVisible(!passwordVisible)}
+                style= {{background:' white', border: 'none',height: '20px', width: '20px' ,marginTop: '-13px'}}
+              >
+                <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
+              </button>
+            </div>
+            {passwordError && <p className="error">{passwordError}</p>}
+            <ul className="password-validation">
+              <li className={passwordValidation.lengthValid ? 'valid' : 'invalid'}>At least 8 characters</li>
+              <li className={passwordValidation.uppercaseValid ? 'valid' : 'invalid'}>At least one uppercase letter</li>
+              <li className={passwordValidation.lowercaseValid ? 'valid' : 'invalid'}>At least one lowercase letter</li>
+              <li className={passwordValidation.numberValid ? 'valid' : 'invalid'}>At least one number</li>
+              <li className={passwordValidation.specialCharValid ? 'valid' : 'invalid'}>At least one special character</li>
+            </ul>
+
+            <label htmlFor="confirmPassword">Please enter password again:</label> <br />
+            <div className="password-container">
+              <input
+                type={confirmPasswordVisible ? "text" : "password"}
+                name="confirmPassword"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)} style= {{background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-13px'}}
+              >
+                <img src={confirmPasswordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
+              </button>
+            </div>
+            <label htmlFor="email">Email:</label> <br />
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            /> <br />
+            {emailError && <p className="error">{emailError}</p>}
+
+            <button type="submit">Sign Up</button>
+          </form>
         </div>
-        <div className="bee-line"></div>
+        <div className="bee-divider">
+          <div className="bee-line"></div>
+          <div className="bee-hexagon with-image">
+            <img src="assets/images/maja.png" alt="Bee" />
+          </div>
+          <div className="bee-line"></div>
+        </div>
       </div>
     </div>
   );
