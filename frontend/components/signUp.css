@@ -133,6 +133,7 @@
     border: none;
     cursor: pointer;
     padding: 0;
+    background-color: white;
 }
 
 .password-container button img {
