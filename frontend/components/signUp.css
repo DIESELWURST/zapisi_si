@@ -24,7 +24,6 @@
 .kontakt form {
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 .kontakt form label {
