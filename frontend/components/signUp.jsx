@@ -192,7 +192,7 @@ const SignUp = () => {
               className="toggle-password"
               onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
             >
-              <img src="assets/images/eye-icon.png" alt="Toggle visibility" />
+              <img src="./frontend/src/show-pass.png" alt="Toggle visibility" />
             </button>
           </div>
           <label htmlFor="email">Email:</label> <br />
