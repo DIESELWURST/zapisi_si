@@ -125,7 +125,7 @@ const SignUp = () => {
 
   return  (
     <div>
-            <Link to="/"><button className='topbar-signin'><img src='../src/home.png'/></button></Link>
+            <Link to="/"><img src='../src/home.png'/></Link>
       <div className='auth-container'>
         <div className="bee-divider">
           <div className="bee-line"></div>
