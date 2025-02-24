@@ -24,6 +24,7 @@
 .kontakt form {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .kontakt form label {
@@ -113,6 +114,7 @@
 .password-container {
     position: relative;
     display: inline-block;
+    align-items: normal;
   }
 
   .password-container input {
