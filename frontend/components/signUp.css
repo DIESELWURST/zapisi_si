@@ -120,6 +120,7 @@
     padding-right: 15px;
     margin-left: 0;
     width:500px;
+    height: 250px;
   }
 
   .password-container button{
@@ -128,7 +129,7 @@
     right:0;
     border:none;
     cursor: pointer;
-    background-color: transparent;
+    background-color: white;
   }
 
 .toggle-password {
