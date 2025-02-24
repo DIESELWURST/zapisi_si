@@ -125,10 +125,7 @@ const SignUp = () => {
 
   return  (
     <div>
-      <div className='buttons'>
-          <Link to="/signin"><button className='topbar-signin'><b>Sign in</b></button></Link>
-          <Link to="/signup"><button className='topbar-signup'><b>Sign up</b></button></Link>
-      </div>
+            <Link to="/"><button className='topbar-signin'><img src='../src/home.png'/></button></Link>
       <div className='auth-container'>
         <div className="bee-divider">
           <div className="bee-line"></div>
