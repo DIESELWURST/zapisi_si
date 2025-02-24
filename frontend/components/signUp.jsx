@@ -164,7 +164,7 @@ const SignUp = () => {
               type="button"
               className="toggle-password"
               onClick={() => setPasswordVisible(!passwordVisible)}
-              style= {{background:' white', border: 'none',height: '20px', width: '20px' ,marginTop: '-25px'}}
+              style= {{background:' white', border: 'none',height: '20px', width: '20px' ,marginTop: '-15px'}}
             >
               <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
             </button>
@@ -191,7 +191,7 @@ const SignUp = () => {
             <button
               type="button"
               className="toggle-password"
-              onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)} style= {{background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-25px'}}
+              onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)} style= {{background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-15px'}}
             >
               <img src={confirmPasswordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
             </button>
