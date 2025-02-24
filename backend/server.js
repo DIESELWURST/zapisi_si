@@ -10,8 +10,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-
-
 const connection = mysql.createConnection({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
@@ -28,7 +26,21 @@ connection.connect(err => {
   console.log('Connected to the MySQL database.');
 });
 
-// Ednpoind za preverjanje uporabniškega gesla
+
+app.get('/api/test-connection', (req, res) => {
+  const query = 'Describe User;';
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      res.status(500).json({ error: 'Internal server error', details: err });
+      return;
+    }
+    res.json({ message: 'Database connection successful', results });
+  });
+});
+
+
+// Endpoint za preverjanje uporabniškega gesla
 app.get('/api/user-exists', (req, res) => {
   const username = req.query.username;
   if (!username) {
@@ -46,7 +58,7 @@ app.get('/api/user-exists', (req, res) => {
     if (results.length > 0) {
       return res.json({ exists: true, message: '1' });
     } else {
-      return res.json({ exists: false, message: '0  ' });
+      return res.json({ exists: false, message: '0' });
     }
   });
 });
@@ -58,7 +70,7 @@ app.post('/api/add-user', (req, res) => {
     return res.status(400).json({ error: 'Username, email, and password are required' });
   }
 
-  const query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)';
+  const query = 'INSERT INTO User (username, email, password) VALUES (?, ?, ?)';
 
   connection.query(query, [username, email, password], (err, results) => {
     if (err) {
