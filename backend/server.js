@@ -34,17 +34,45 @@ connection.connect(err => {
   console.log('Connected to the MySQL database.');
 });
 
-app.get("/api/user-exists", (req, res) => {
-  const query = 'SELECT * FROM User WHERE username = ?';
+// Endpoint to check if a user exists
+app.get('/api/user-exists', (req, res) => {
   const username = req.query.username;
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
+  }
+
+  const query = 'SELECT * FROM User WHERE username = ?';
 
   connection.query(query, [username], (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
-      res.status(500).json({ error: 'Internal server error', details: err });
-      return;
+      return res.status(500).json({ error: 'Internal server error', details: err });
     }
-    res.json({ message: 'Database connection successful', results });
+
+    if (results.length > 0) {
+      return res.json({ exists: true, message: '1' });
+    } else {
+      return res.json({ exists: false, message: '0' });
+    }
+  });
+});
+
+// Endpoint to add a new user
+app.post('/api/add-user', (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: 'Username, email, and password are required' });
+  }
+
+  const query = 'INSERT INTO User (username, email, password) VALUES (?, ?, ?)';
+
+  connection.query(query, [username, email, password], (err, results) => {
+    if (err) {
+      console.error('Error adding user to the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    return res.json({ message: 'User added successfully' });
   });
 });
 
