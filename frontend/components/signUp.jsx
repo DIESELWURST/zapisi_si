@@ -26,13 +26,28 @@ const SignUp = () => {
     }
   };
 
+  const checkMail = async (email) => {
+    try {
+      const response = await fetch(`https://backend-production-fbab.up.railway.app/api/mail-exists?mail=${email}`);
+      const data = await response.json();
+      return data.exists;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false;
+    }
+  };
+
   const handleSignUp = async (event) => {
     event.preventDefault();
 
     let valid = true;
 
+    const emailExists = await checkMail(email);
     if (!validateEmail(email)) {
       setEmailError('Invalid email format');
+      valid = false;
+    } else if (emailExists) {
+      setEmailError('Email already exists');
       valid = false;
     } else {
       setEmailError('');
@@ -102,20 +117,26 @@ const SignUp = () => {
           <h2>Sign Up</h2>
           <label htmlFor="username">Username:</label> <br />
           <input
-            type="text"name="username"id="username"val={username} onChange={(e)=> setUsername(e.target.value )} required/> <br />
+            type="text"
+            name="username"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            /> <br />
           {usernameError && <p className="error">{usernameError}</p>}
 
           <label htmlFor="password">Password:</label> <br />
           <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required/> <br />
           
           <label htmlFor="confirmPassword">Please enter password again:</label> <br />
-          <input type="password" name="confirmPassword" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required/> <br />
-
-          <label htmlFor="email">Email:</label> <br />
+          <input type="password" name="confirmPassword" id="confirmPassword" value ={confirmPassword} onChange={(e) => setConfirmPassword(e.target. value)} required/> <br />
+            {passwordError && <p className="error">{passwordError}</p>}
+         <label htmlFor="email">Email:</label> <br />
           <input
             type="email"
-            name="email"
-            id="email"
+           name="email"
+          id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

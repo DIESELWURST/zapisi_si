@@ -34,7 +34,7 @@ connection.connect(err => {
   console.log('Connected to the MySQL database.');
 });
 
-// Endpoint to check if a user exists
+// Endpoint , ki pregleda, če obstaja vnesen uporabnik
 app.get('/api/user-exists', (req, res) => {
   const username = req.query.username;
   if (!username) {
@@ -57,7 +57,32 @@ app.get('/api/user-exists', (req, res) => {
   });
 });
 
-// Endpoint to add a new user
+
+
+// Endpoint , ki pregleda, če obstaja vnesen uporabnik
+app.get('/api/mail-exists', (req, res) => {
+  const mail = req.query.mail;
+  if (!mail) {
+    return res.status(400).json({ error: 'Mail is required' });
+  }
+
+  const query = 'SELECT * FROM User WHERE email = ?';
+
+  connection.query(query, [mail], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    if (results.length > 0) {
+      return res.json({ exists: true, message: '1' });
+    } else {
+      return res.json({ exists: false, message: '0' });
+    }
+  });
+});
+
+// Endpoint, ki doda novega uporabnika
 app.post('/api/add-user', (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
