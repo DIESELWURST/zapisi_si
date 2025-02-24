@@ -112,6 +112,20 @@
 }
 
 .password-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .password-container input {
+    padding-right: 40px;
+  }
+
+  .password-container button{
+    position: absolute;
+    top:0;
+    right:0;
+    border:none;
+    cursor: pointer;
   }
 
 .toggle-password {
