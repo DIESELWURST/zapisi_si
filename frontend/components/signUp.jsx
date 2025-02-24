@@ -125,7 +125,7 @@ const SignUp = () => {
 
   return  (
     <div>
-            <Link to="/"><img src='../src/home.png' style= {{margin:'10px 0px 10px 10px'}}/></Link>
+            <Link to="/"><img src='../src/home.png' style= {{margin:'10px 0px 0px 10px'}}/></Link>
       <div className='auth-container'>
         <div className="bee-divider">
           <div className="bee-line"></div>
