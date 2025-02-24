@@ -35,7 +35,7 @@ connection.connect(err => {
 });
 
 app.get("/api/user-exists", (req, res) => {
-  const query = 'SELECT * FROM users WHERE username = ?';
+  const query = 'SELECT * FROM User WHERE username = ?';
   const username = req.query.username;
 
   connection.query(query, [username], (err, results) => {
