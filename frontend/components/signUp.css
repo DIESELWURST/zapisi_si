@@ -111,6 +111,8 @@
     margin-top: 5px; 
   }
 
+  .password-container {
+}
 
 .toggle-password {
   position: absolute;
@@ -131,7 +133,6 @@
 .password-validation {
   list-style-type: none;
   padding: 0;
-  margin: 10px 0;
 }
 
 .password-validation li {
