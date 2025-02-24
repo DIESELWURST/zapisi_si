@@ -165,9 +165,9 @@ const SignUp = () => {
               className="toggle-password"
               onClick={() => setPasswordVisible(!passwordVisible)}
             >
-              {passwordVisible ? <img src="../frontend/src/hide-pass.png" alt="Show"/> : <img src="../frontend/src/show-pass.png" alt="Show" />}
+              <img src="assets/images/eye-icon.png" alt="Toggle visibility" />
             </button>
-          
+          </div>
           {passwordError && <p className="error">{passwordError}</p>}
           <ul className="password-validation">
             <li className={passwordValidation.lengthValid ? 'valid' : 'invalid'}>At least 8 characters</li>
@@ -176,7 +176,7 @@ const SignUp = () => {
             <li className={passwordValidation.numberValid ? 'valid' : 'invalid'}>At least one number</li>
             <li className={passwordValidation.specialCharValid ? 'valid' : 'invalid'}>At least one special character</li>
           </ul>
-          </div>
+
           <label htmlFor="confirmPassword">Please enter password again:</label> <br />
           <div className="password-container">
             <input
@@ -192,7 +192,7 @@ const SignUp = () => {
               className="toggle-password"
               onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
             >
-              {confirmPasswordVisible ? "Hide" : "Show"}
+              <img src="assets/images/eye-icon.png" alt="Toggle visibility" />
             </button>
           </div>
           <label htmlFor="email">Email:</label> <br />
