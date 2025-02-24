@@ -110,3 +110,42 @@
     border-radius: 3px; 
     margin-top: 5px; 
   }
+
+  .password-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: #007bff;
+}
+
+.toggle-password:focus {
+  outline: none;
+}
+
+.password-validation {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.password-validation li {
+  font-size: 0.9em;
+}
+
+.password-validation .valid {
+  color: green;
+}
+
+.password-validation .invalid {
+  color: red;
+}
+

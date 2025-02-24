@@ -9,10 +9,28 @@ const SignUp = () => {
   const [emailError, setEmailError] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(String(email).toLowerCase());
+  };
+
+  const validatePassword = (password) => {
+    const lengthValid = password.length >= 8;
+    const uppercaseValid = /[A-Z]/.test(password);
+    const lowercaseValid = /[a-z]/.test(password);
+    const numberValid = /\d/.test(password);
+    const specialCharValid = /[@$!%*?&]/.test(password);
+    return {
+      lengthValid,
+      uppercaseValid,
+      lowercaseValid,
+      numberValid,
+      specialCharValid,
+      allValid: lengthValid && uppercaseValid && lowercaseValid && numberValid && specialCharValid,
+    };
   };
 
   const checkUsername = async (username) => {
@@ -47,7 +65,7 @@ const SignUp = () => {
       setEmailError('Invalid email format');
       valid = false;
     } else if (emailExists) {
-      setEmailError('Email already exists');
+      setEmailError('It seems like you have already registered with this email');
       valid = false;
     } else {
       setEmailError('');
@@ -61,7 +79,11 @@ const SignUp = () => {
       setUsernameError('');
     }
 
-    if (password !== confirmPassword) {
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.allValid) {
+      setPasswordError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character');
+      valid = false;
+    } else if (password !== confirmPassword) {
       setPasswordError('Passwords do not match');
       valid = false;
     } else {
@@ -98,6 +120,8 @@ const SignUp = () => {
     }
   };
 
+  const passwordValidation = validatePassword(password);
+
   return (
     <div className='auth-container'>
       <div className="bee-divider">
@@ -123,20 +147,59 @@ const SignUp = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            /> <br />
+          /> <br />
           {usernameError && <p className="error">{usernameError}</p>}
 
           <label htmlFor="password">Password:</label> <br />
-          <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required/> <br />
-          
+          <div className="password-container">
+            <input
+              type={passwordVisible ? "text" : "password"}
+              name="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setPasswordVisible(!passwordVisible)}
+            >
+              {passwordVisible ? "Hide" : "Show"}
+            </button>
+          </div>
+          {passwordError && <p className="error">{passwordError}</p>}
+          <ul className="password-validation">
+            <li className={passwordValidation.lengthValid ? 'valid' : 'invalid'}>At least 8 characters</li>
+            <li className={passwordValidation.uppercaseValid ? 'valid' : 'invalid'}>At least one uppercase letter</li>
+            <li className={passwordValidation.lowercaseValid ? 'valid' : 'invalid'}>At least one lowercase letter</li>
+            <li className={passwordValidation.numberValid ? 'valid' : 'invalid'}>At least one number</li>
+            <li className={passwordValidation.specialCharValid ? 'valid' : 'invalid'}>At least one special character</li>
+          </ul>
+
           <label htmlFor="confirmPassword">Please enter password again:</label> <br />
-          <input type="password" name="confirmPassword" id="confirmPassword" value ={confirmPassword} onChange={(e) => setConfirmPassword(e.target. value)} required/> <br />
-            {passwordError && <p className="error">{passwordError}</p>}
-         <label htmlFor="email">Email:</label> <br />
+          <div className="password-container">
+            <input
+              type={confirmPasswordVisible ? "text" : "password"}
+              name="confirmPassword"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+            >
+              {confirmPasswordVisible ? "Hide" : "Show"}
+            </button>
+          </div>
+          <label htmlFor="email">Email:</label> <br />
           <input
             type="email"
-           name="email"
-          id="email"
+            name="email"
+            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
