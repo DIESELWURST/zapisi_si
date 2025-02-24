@@ -112,23 +112,19 @@
 }
 
 .password-container {
-  position: relative;
-}
+  }
 
 .toggle-password {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 0.9em;
-  color: #007bff;
+  padding: 0;
+  margin-left: 5px;
 }
 
-.toggle-password:focus {
-  outline: none;
+.toggle-password img {
+  width: 20px;
+  height: 20px;
 }
 
 .password-validation {

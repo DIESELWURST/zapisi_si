@@ -165,7 +165,7 @@ const SignUp = () => {
               className="toggle-password"
               onClick={() => setPasswordVisible(!passwordVisible)}
             >
-              {passwordVisible ? "Hide" : "Show"}
+              {passwordVisible ? <img src="frontend/src/hide-pass.png" alt="Show"/> : <img src="frontend/src/show-pass.png" alt="Show" />}
             </button>
           </div>
           {passwordError && <p className="error">{passwordError}</p>}
