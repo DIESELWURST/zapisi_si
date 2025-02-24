@@ -107,6 +107,7 @@
     background-color: #ffcc00;
     border-radius: 3px;
     margin-top: 5px;
+    font-weight: bold;
 }
 
 .password-container {
@@ -135,19 +136,6 @@
 }
 
 .password-container button img {
-    width: 20px;
-    height: 20px;
-}
-
-.toggle-password {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    margin-left: 5px;
-}
-
-.toggle-password img {
     width: 20px;
     height: 20px;
 }

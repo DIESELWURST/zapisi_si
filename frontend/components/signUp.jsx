@@ -81,7 +81,7 @@ const SignUp = () => {
 
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.allValid) {
-      setPasswordError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character');
+      setPasswordError('Invalid password format');
       valid = false;
     } else if (password !== confirmPassword) {
       setPasswordError('Passwords do not match');
