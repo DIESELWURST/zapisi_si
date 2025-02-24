@@ -103,15 +103,16 @@
 
 
 .error {
-    color: black; 
-    font-size: 0.9em; 
-    padding: 5px; 
-    background-color: #ffcc00;  
-    border-radius: 3px; 
-    margin-top: 5px; 
-  }
+    color: black;
+    font-size: 0.9em;
+    padding: 5px;
+    background-color: #ffcc00;
+    border-radius: 3px;
+    margin-top: 5px;
+}
 
-  .password-container {
+.password-container {
+  position: relative;
 }
 
 .toggle-password {
@@ -133,6 +134,7 @@
 .password-validation {
   list-style-type: none;
   padding: 0;
+  margin: 10px 0;
 }
 
 .password-validation li {
