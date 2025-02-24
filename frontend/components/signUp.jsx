@@ -151,7 +151,7 @@ const SignUp = () => {
           {usernameError && <p className="error">{usernameError}</p>}
 
           <label htmlFor="password">Password:</label> <br />
-          <div className="password-container">
+        
             <input
               type={passwordVisible ? "text" : "password"}
               name="password"
@@ -167,7 +167,6 @@ const SignUp = () => {
             >
               {passwordVisible ? "Hide" : "Show"}
             </button>
-          </div>
           {passwordError && <p className="error">{passwordError}</p>}
           <ul className="password-validation">
             <li className={passwordValidation.lengthValid ? 'valid' : 'invalid'}>At least 8 characters</li>
@@ -178,7 +177,6 @@ const SignUp = () => {
           </ul>
 
           <label htmlFor="confirmPassword">Please enter password again:</label> <br />
-          <div className="password-container">
             <input
               type={confirmPasswordVisible ? "text" : "password"}
               name="confirmPassword"
@@ -194,7 +192,6 @@ const SignUp = () => {
             >
               {confirmPasswordVisible ? "Hide" : "Show"}
             </button>
-          </div>
           <label htmlFor="email">Email:</label> <br />
           <input
             type="email"
