@@ -88,7 +88,9 @@ app.post('/api/add-user', (req, res) => {
     }
 
     const userId = results.insertId;
+
     const defaultPage = {
+      userId: userId,
       title: 'Welcome to ZapišiSi!',
       content: JSON.stringify([
         { id: 1, type: "textBlock", content: "Getting Started!" },
@@ -181,19 +183,40 @@ app.get('/api/user-pages', (req, res) => {
 // Endpoint to add a new page
 app.post('/api/add-page', (req, res) => {
   const { userId, title, content } = req.body;
-  if (!userId || !title || !content) {
-    return res.status(400).json({ error: 'User ID, title, and content are required' });
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
   }
 
-  const query = 'INSERT INTO Page (title, content) VALUES (?, ?)';
+  const defaultTitle = 'Welcome to ZapišiSi!';
+  const defaultContent = JSON.stringify([
+    { id: 1, type: "textBlock", content: "Getting Started!" },
+    {
+      id: 2,
+      type: "checklist",
+      items: [
+        { id: 1, content: "Click and type anywhere", checked: false },
+        { id: 2, content: "Drag items to reorder them", checked: false },
+      ],
+    },
+    {
+      id: 3,
+      type: "toggleBlock",
+      title: "This is a toggle block.",
+      content: "Here's some info about toggles.",
+    },
+  ]);
 
-  connection.query(query, [title, content], (err, results) => {
+  const pageTitle = title || defaultTitle;
+  const pageContent = content || defaultContent;
+
+  const pageQuery = 'INSERT INTO Page (title, content) VALUES (?, ?)';
+  connection.query(pageQuery, [pageTitle, pageContent], (err, pageResults) => {
     if (err) {
-      console.error('Error adding page to the database:', err);
+      console.error('Error creating page:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
     }
 
-    const pageId = results.insertId;
+    const pageId = pageResults.insertId;
     const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
     connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
       if (err) {
