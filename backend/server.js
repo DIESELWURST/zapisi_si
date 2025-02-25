@@ -210,14 +210,14 @@ app.post('/api/add-page', (req, res) => {
 
 // Endpoint to update a page
 app.post('/api/update-page', (req, res) => {
-  const { page_id, title, content } = req.body;
-  if (!page_id || !title || !content) {
-    return res.status(400).json({ error: 'Page ID, title, and content are required' });
+  const { page_id, title, content, user_id } = req.body;
+  if (!page_id || !title || !content || !user_id) {
+    return res.status(400).json({ error: 'Page ID, title, content, and user ID are required' });
   }
 
-  const query = 'UPDATE Page SET title = ?, content = ? WHERE page_id = ?';
+  const updatePageQuery = 'UPDATE Page SET title = ?, content = ?, last_edited = NOW() WHERE page_id = ?';
 
-  connection.query(query, [title, content, page_id], (err, results) => {
+  connection.query(updatePageQuery, [title, content, page_id], (err, results) => {
     if (err) {
       console.error('Error updating page:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });

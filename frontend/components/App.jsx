@@ -154,6 +154,7 @@ const App = () => {
     const pageData = {
       ...currentPage,
       content: JSON.stringify(currentPage.content),
+      user_id: user.user_id,
     };
 
     try {
@@ -176,6 +177,10 @@ const App = () => {
   const handleSignIn = (user) => {
     setIsAuthenticated(true);
     setUser(user);
+    const lastPageId = user.last_edited_page_id;
+    if (lastPageId) {
+      setCurrentPageId(lastPageId);
+    }
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('user', JSON.stringify(user));
   };
