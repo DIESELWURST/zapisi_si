@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import SideBar from "./sideBar";
 import RightBar from "./rightBar";
@@ -6,42 +6,39 @@ import CurrentPage from "./currentPage";
 import LandingPage from "./landingPage";
 import SignUp from "./signUp";
 import SignIn from "./signIn";
-import "../components/styles.css";
+import "./styles.css";
 
 const App = () => {
-  const [pages, setPages] = useState([
-    {
-      id: 1,
-      title: "Getting Started",
-      components: [
-        { id: 1, type: "textBlock", content: "Welcome to your page!" },
-        {
-          id: 2,
-          type: "checklist",
-          items: [
-            { id: 1, content: "Click and type anywhere", checked: false },
-            { id: 2, content: "Drag items to reorder them", checked: false },
-          ],
-        },
-        {
-          id: 3,
-          type: "toggleBlock",
-          title: "This is a toggle block. Click the little triangle to see more useful tips!",
-          content: `• Highlight any text, and use the menu that pops up to **style** *your* ~~writing~~ however [you] like.\n• Click the **+ New Page** button at the bottom of your sidebar to add a new page.`,
-        },
-      ],
-    },
-  ]);
-  const [currentPageId, setCurrentPageId] = useState(1);
+  const [pages, setPages] = useState([]);
+  const [currentPageId, setCurrentPageId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const addNewPage = () => {
-    const newPageId = pages.length + 1;
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      fetchUserPages(user.id);
+    }
+  }, [isAuthenticated, user]);
+
+  const fetchUserPages = async (userId) => {
+    try {
+      const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
+      const data = await response.json();
+      setPages(data.pages);
+      if (data.pages.length > 0) {
+        setCurrentPageId(data.pages[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching user pages:', error);
+    }
+  };
+
+  const addNewPage = async () => {
     const newPage = {
-      id: newPageId,
-      title: `Page ${newPageId}`,
-      components: [
-        { id: 1, type: "textBlock", content: `Welcome to Page ${newPageId}!` },
+      userId: user.id,
+      title: `Page ${pages.length + 1}`,
+      components: JSON.stringify([
+        { id: 1, type: "textBlock", content: `Getting Started!` },
         {
           id: 2,
           type: "checklist",
@@ -56,10 +53,23 @@ const App = () => {
           title: "This is a toggle block.",
           content: "Here's some info about toggles.",
         },
-      ],
+      ]),
     };
-    setPages([...pages, newPage]);
-    setCurrentPageId(newPageId);
+
+    try {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/add-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPage),
+      });
+      const data = await response.json();
+      setPages([...pages, { ...newPage, id: data.pageId }]);
+      setCurrentPageId(data.pageId);
+    } catch (error) {
+      console.error('Error adding new page:', error);
+    }
   };
 
   const selectPage = (id) => {
@@ -83,7 +93,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} setUser={setUser} />} />
         <Route
           path="/app"
           element={
