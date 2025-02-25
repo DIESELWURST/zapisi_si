@@ -52,7 +52,7 @@ const SignIn = () => {
           <div className="bee-line"></div>
         </div>
         <div className="kontakt" id="kontakt">
-          <div className="bee-divider">
+          <div className="bee-divider" style={{marginBottom:'75px'}}>
             <div className="bee-line"></div>
             <div className="bee-hexagon"></div>
             <div className="bee-line"></div>
@@ -90,7 +90,7 @@ const SignIn = () => {
               </button>
             </div>
 
-            <button type="submit" style={{marginBottom:'150px'}}>Sign In</button>
+            <button type="submit" style={{marginBottom:'25px'}}>Sign In</button>
           </form>
         </div>
         <div className="bee-divider">
