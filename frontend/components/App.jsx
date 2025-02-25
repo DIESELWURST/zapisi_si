@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate, Link, useNavigate } from "react-router-dom";
 import SideBar from "./sideBar";
 import RightBar from "./rightBar";
 import CurrentPage from "./currentPage";
@@ -7,6 +7,7 @@ import LandingPage from "./landingPage";
 import SignUp from "./signUp";
 import SignIn from "./signIn";
 import "./styles.css";
+import './signIn.css';
 
 const App = () => {
   const [pages, setPages] = useState([]);
@@ -16,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      fetchUserPages(user.id);
+      fetchUserPages(user.user_id);
     }
   }, [isAuthenticated, user]);
 
@@ -26,20 +27,19 @@ const App = () => {
       const data = await response.json();
       setPages(data.pages);
       if (data.pages.length > 0) {
-        setCurrentPageId(data.pages[0].id);
+        setCurrentPageId(data.pages[0].page_id);
       }
     } catch (error) {
       console.error('Error fetching user pages:', error);
     }
   };
 
-  const addNewPage = () => {
-    const newPageId = pages.length + 1;
+  const addNewPage = async () => {
     const newPage = {
-      id: newPageId,
-      title: `Page ${newPageId}`,
-      components: [
-        { id: 1, type: "textBlock", content: `Welcome to Page ${newPageId}!` },
+      userId: user.user_id,
+      title: `Page ${pages.length + 1}`,
+      content: JSON.stringify([
+        { id: 1, type: "textBlock", content: `Getting Started!` },
         {
           id: 2,
           type: "checklist",
@@ -54,10 +54,23 @@ const App = () => {
           title: "This is a toggle block.",
           content: "Here's some info about toggles.",
         },
-      ],
+      ]),
     };
-    setPages([...pages, newPage]);
-    setCurrentPageId(newPageId);
+
+    try {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/add-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPage),
+      });
+      const data = await response.json();
+      setPages([...pages, { ...newPage, page_id: data.pageId }]);
+      setCurrentPageId(data.pageId);
+    } catch (error) {
+      console.error('Error adding new page:', error);
+    }
   };
 
   const selectPage = (id) => {
@@ -66,7 +79,7 @@ const App = () => {
 
   const updatePageTitle = (newTitle) => {
     const updatedPages = pages.map((page) => {
-      if (page.id === currentPageId) {
+      if (page.page_id === currentPageId) {
         return { ...page, title: newTitle };
       }
       return page;
@@ -74,7 +87,7 @@ const App = () => {
     setPages(updatedPages);
   };
 
-  const currentPage = pages.find((page) => page.id === currentPageId);
+  const currentPage = pages.find((page) => page.page_id === currentPageId);
 
   return (
     <Router>
@@ -93,11 +106,11 @@ const App = () => {
                   {currentPage ? (
                     <CurrentPage
                       pageTitle={currentPage.title}
-                      components={currentPage.components}
+                      components={currentPage.content}
                       setComponents={(newComponents) => {
                         const newPages = pages.map((page) => {
-                          if (page.id === currentPageId) {
-                            return { ...page, components: newComponents };
+                          if (page.page_id === currentPageId) {
+                            return { ...page, content: newComponents };
                           }
                           return page;
                         });

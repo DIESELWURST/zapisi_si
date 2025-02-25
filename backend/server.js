@@ -10,7 +10,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-
 const connection = mysql.createConnection({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
@@ -90,7 +89,46 @@ app.post('/api/add-user', (req, res) => {
       return res.status(500).json({ error: 'Internal server error', details: err });
     }
 
-    return res.json({ message: 'User added successfully' });
+    const userId = results.insertId;
+    const defaultPage = {
+      title: 'Welcome to ZapišiSi!',
+      content: JSON.stringify([
+        { id: 1, type: "textBlock", content: "Getting Started!" },
+        {
+          id: 2,
+          type: "checklist",
+          items: [
+            { id: 1, content: "Click and type anywhere", checked: false },
+            { id: 2, content: "Drag items to reorder them", checked: false },
+          ],
+        },
+        {
+          id: 3,
+          type: "toggleBlock",
+          title: "This is a toggle block.",
+          content: "Here's some info about toggles.",
+        },
+      ]),
+    };
+
+    const pageQuery = 'INSERT INTO Page (title, content) VALUES (?, ?)';
+    connection.query(pageQuery, [defaultPage.title, defaultPage.content], (err, pageResults) => {
+      if (err) {
+        console.error('Error creating default page:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err });
+      }
+
+      const pageId = pageResults.insertId;
+      const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
+      connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
+        if (err) {
+          console.error('Error linking user to page:', err);
+          return res.status(500).json({ error: 'Internal server error', details: err });
+        }
+
+        return res.json({ message: 'User and default page added successfully' });
+      });
+    });
   });
 });
 
@@ -113,7 +151,7 @@ app.get('/api/check-credentials', (req, res) => {
     }
 
     if (results.length > 0) {
-      return res.json({ exists: true, message: '1' });
+      return res.json({ exists: true, user: results[0], message: '1' });
     } else {
       return res.json({ exists: false, message: '0' });
     }
@@ -127,7 +165,12 @@ app.get('/api/user-pages', (req, res) => {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
-  const query = 'SELECT * FROM Pages WHERE userId = ?';
+  const query = `
+    SELECT Page.page_id, Page.title, Page.content
+    FROM Page
+    JOIN Owner ON Page.page_id = Owner.page_id
+    WHERE Owner.user_id = ?
+  `;
 
   connection.query(query, [userId], (err, results) => {
     if (err) {
@@ -138,6 +181,35 @@ app.get('/api/user-pages', (req, res) => {
     return res.json({ pages: results });
   });
 });
+
+// Endpoint to add a new page
+app.post('/api/add-page', (req, res) => {
+  const { userId, title, content } = req.body;
+  if (!userId || !title || !content) {
+    return res.status(400).json({ error: 'User ID, title, and content are required' });
+  }
+
+  const query = 'INSERT INTO Page (title, content) VALUES (?, ?)';
+
+  connection.query(query, [title, content], (err, results) => {
+    if (err) {
+      console.error('Error adding page to the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    const pageId = results.insertId;
+    const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
+    connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
+      if (err) {
+        console.error('Error linking user to page:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err });
+      }
+
+      return res.json({ message: 'Page added successfully', pageId });
+    });
+  });
+});
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
