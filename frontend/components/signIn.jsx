@@ -58,7 +58,7 @@ const SignIn = () => {
             <div className="bee-line"></div>
           </div>
           <form onSubmit={handleSignUp}>
-            <h2>Sign in</h2>
+            <h2 style={{marginBottom:'25px'}}>Sign in</h2>
             <label htmlFor="username">Username or email:</label> <br />
             <input
               type="text"
@@ -85,13 +85,13 @@ const SignIn = () => {
                 type="button"
                 className="toggle-password"
                 onClick={() => setPasswordVisible(!passwordVisible)}
-                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-13px' }}
+                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-20px' }}
               >
                 <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"} />
               </button>
             </div>
 
-            <button type="submit" style={{marginBottom:'75px'}}>Sign In</button>
+            <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
           </form>
         </div>
         <div className="bee-divider">
