@@ -59,108 +59,71 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
   };
 
   const handleTitleChange = (e) => {
-    if (!titleRef.current) return;
-    
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-  
-    const timeout = setTimeout(() => {
-      setPageTitle(titleRef.current.innerText.trim());
-    }, 1000);
-  
-    setTypingTimeout(timeout);
-  };
-  
-  const handleKeyDown = (e) => {
-    if (e.key === "Backspace" && !titleRef.current.innerText) {
-      e.preventDefault();
-    }
+    setPageTitle(e.target.value);
   };
 
+  const handleComponentChange = (id, newComponent) => {
+    const updatedComponents = components.map((component) =>
+      component.id === id ? newComponent : component
+    );
+    setComponents(updatedComponents);
+  };
 
   useEffect(() => {
     setEditingTitle(pageTitle); 
   }, [pageTitle]);
 
-
-  const renderComponent = (component, index) => {
-    switch (component.type) {
-      case "textBlock":
-        return (
-          <TextBlock
-            key={component.id}
-            content={component.content}
-            onUpdate={(newContent) => {
-              const newComponents = [...components];
-              newComponents[index].content = newContent;
-              setComponents(newComponents);
-            }}
-            onDragStart={() => handleDragStart(index)}
-            onDragEnter={() => handleDragEnter(index)}
-            onDragEnd={handleDragEnd}
-            onAddComponent={() => handleAddComponent(index, component.type)}
-          />
-        );
-      case "checklist":
-        return (
-          <div
-            key={component.id}
-            draggable
-            onDragStart={() => handleDragStart(index)}
-            onDragEnter={() => handleDragEnter(index)}
-            onDragEnd={handleDragEnd}
-            className="draggable-item"
-          >
-            <Checklist
-              items={component.items}
-              setItems={(newItems) => {
-                const newComponents = [...components];
-                newComponents[index].items = newItems;
-                setComponents(newComponents);
-              }}
-            />
-          </div>
-        );
-      case "toggleBlock":
-        return (
-          <ToggleBlock
-            key={component.id}
-            title={component.title}
-            content={component.content}
-            onUpdate={(newContent) => {
-              const newComponents = [...components];
-              newComponents[index].content = newContent;
-              setComponents(newComponents);
-            }}
-            onDragStart={() => handleDragStart(index)}
-            onDragEnter={() => handleDragEnter(index)}
-            onDragEnd={handleDragEnd}
-            onAddComponent={() => handleAddComponent(index, component.type)}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-  <div className="flex">
-    <div className=" bg-black text-white p-6 ml-40">
-      <div
-        ref={titleRef}
-        className="pageName"
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleTitleChange}
-        onKeyDown={handleKeyDown}
-      >
-        {editingTitle || "Untitled Page"}
+    <div className="current-page">
+      <input
+        type="text"
+        value={pageTitle}
+        onChange={handleTitleChange}
+        className="page-title-input"
+      />
+      <div className="components">
+        {Array.isArray(components) ? components.map((component) => {
+          switch (component.type) {
+            case 'textBlock':
+              return (
+                <TextBlock
+                  key={component.id}
+                  {...component}
+                  onContentChange={(newContent) =>
+                    handleComponentChange(component.id, { ...component, content: newContent })
+                  }
+                />
+              );
+            case 'checklist':
+              return (
+                <Checklist
+                  key={component.id}
+                  {...component}
+                  onItemsChange={(newItems) =>
+                    handleComponentChange(component.id, { ...component, items: newItems })
+                  }
+                />
+              );
+            case 'toggleBlock':
+              return (
+                <ToggleBlock
+                  key={component.id}
+                  {...component}
+                  onTitleUpdate={(newTitle) =>
+                    handleComponentChange(component.id, { ...component, title: newTitle })
+                  }
+                  onContentUpdate={(newContent) =>
+                    handleComponentChange(component.id, { ...component, content: newContent })
+                  }
+                />
+              );
+            default:
+              return null;
+          }
+        }) : null}
       </div>
-
-      {components.map((component, index) => renderComponent(component, index))}
     </div>
-  </div>
   );
-}
+};
+
 export default CurrentPage;

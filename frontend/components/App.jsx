@@ -109,7 +109,7 @@ const App = () => {
                   {currentPage ? (
                     <CurrentPage
                       pageTitle={currentPage.title}
-                      components={currentPage.content}
+                      components={Array.isArray(currentPage.content) ? currentPage.content : []}
                       setComponents={(newComponents) => {
                         const newPages = pages.map((page) => {
                           if (page.page_id === currentPageId) {
