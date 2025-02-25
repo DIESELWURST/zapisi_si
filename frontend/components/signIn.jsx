@@ -79,6 +79,7 @@ const SignIn = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                style={{marginBottom:'50px'}}
               />
               <button
                 type="button"
