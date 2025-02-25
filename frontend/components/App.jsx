@@ -16,7 +16,7 @@ const App = () => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      fetchUserPages(user.id);
+      fetchUserPages(user.user_id);
     }
   }, [isAuthenticated, user]);
 
@@ -24,9 +24,13 @@ const App = () => {
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
       const data = await response.json();
-      setPages(data.pages);
-      if (data.pages.length > 0) {
-        setCurrentPageId(data.pages[0].id);
+      if (data.pages) {
+        setPages(data.pages);
+        if (data.pages.length > 0) {
+          setCurrentPageId(data.pages[0].page_id);
+        }
+      } else {
+        setPages([]);
       }
     } catch (error) {
       console.error('Error fetching user pages:', error);
@@ -35,9 +39,9 @@ const App = () => {
 
   const addNewPage = async () => {
     const newPage = {
-      userId: user.id,
+      userId: user.user_id,
       title: `Page ${pages.length + 1}`,
-      components: JSON.stringify([
+      content: JSON.stringify([
         { id: 1, type: "textBlock", content: `Getting Started!` },
         {
           id: 2,
@@ -65,7 +69,7 @@ const App = () => {
         body: JSON.stringify(newPage),
       });
       const data = await response.json();
-      setPages([...pages, { ...newPage, id: data.pageId }]);
+      setPages([...pages, { ...newPage, page_id: data.pageId }]);
       setCurrentPageId(data.pageId);
     } catch (error) {
       console.error('Error adding new page:', error);
