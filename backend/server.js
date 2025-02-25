@@ -26,7 +26,7 @@ connection.connect(err => {
   console.log('Connected to the MySQL database.');
 });
 
-// Endpoint , ki pregleda, če obstaja vnesen uporabnik
+// Endpoint to check if a user exists by username
 app.get('/api/user-exists', (req, res) => {
   const username = req.query.username;
   if (!username) {
@@ -49,7 +49,7 @@ app.get('/api/user-exists', (req, res) => {
   });
 });
 
-// Endpoint , ki pregleda, če obstaja vnesen uporabnik
+// Endpoint to check if a user exists by email
 app.get('/api/mail-exists', (req, res) => {
   const mail = req.query.mail;
   if (!mail) {
@@ -72,7 +72,7 @@ app.get('/api/mail-exists', (req, res) => {
   });
 });
 
-// Endpoint, ki doda novega uporabnika in ustvari privzeto stran
+// Endpoint to add a new user and create a default page
 app.post('/api/add-user', (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
@@ -90,7 +90,7 @@ app.post('/api/add-user', (req, res) => {
     const userId = results.insertId;
     const defaultPage = {
       title: 'Welcome to ZapišiSi!',
-      components: JSON.stringify([
+      content: JSON.stringify([
         { id: 1, type: "textBlock", content: "Getting Started!" },
         {
           id: 2,
@@ -109,19 +109,28 @@ app.post('/api/add-user', (req, res) => {
       ]),
     };
 
-    const pageQuery = 'INSERT INTO Page (userId, title, components) VALUES (?, ?, ?)';
-    connection.query(pageQuery, [userId, defaultPage.title, defaultPage.components], (err, pageResults) => {
+    const pageQuery = 'INSERT INTO Page (title, content) VALUES (?, ?)';
+    connection.query(pageQuery, [defaultPage.title, defaultPage.content], (err, pageResults) => {
       if (err) {
         console.error('Error creating default page:', err);
         return res.status(500).json({ error: 'Internal server error', details: err });
       }
 
-      return res.json({ message: 'User and default page added successfully' });
+      const pageId = pageResults.insertId;
+      const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
+      connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
+        if (err) {
+          console.error('Error linking user to page:', err);
+          return res.status(500).json({ error: 'Internal server error', details: err });
+        }
+
+        return res.json({ message: 'User and default page added successfully' });
+      });
     });
   });
 });
 
-// Endpoint , ki pregleduje vpis uporabnika
+// Endpoint to check user credentials
 app.get('/api/check-credentials', (req, res) => {
   const credentials = req.query.credentials;
   const password = req.query.password;
@@ -145,14 +154,19 @@ app.get('/api/check-credentials', (req, res) => {
   });
 });
 
-// Endpoint preko katerega posegamo po straneh uporabnika
+// Endpoint to fetch user pages
 app.get('/api/user-pages', (req, res) => {
   const userId = req.query.userId;
   if (!userId) {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
-  const query = 'SELECT * FROM Page WHERE userId = ?';
+  const query = `
+    SELECT Page.page_id, Page.title, Page.content
+    FROM Page
+    JOIN Owner ON Page.page_id = Owner.page_id
+    WHERE Owner.user_id = ?
+  `;
 
   connection.query(query, [userId], (err, results) => {
     if (err) {
@@ -164,22 +178,31 @@ app.get('/api/user-pages', (req, res) => {
   });
 });
 
-// Endpoint za dodajanje nove strani
+// Endpoint to add a new page
 app.post('/api/add-page', (req, res) => {
-  const { userId, title, components } = req.body;
-  if (!userId || !title || !components) {
-    return res.status(400).json({ error: 'User ID, title, and components are required' });
+  const { userId, title, content } = req.body;
+  if (!userId || !title || !content) {
+    return res.status(400).json({ error: 'User ID, title, and content are required' });
   }
 
-  const query = 'INSERT INTO pages (userId, title, components) VALUES (?, ?, ?)';
+  const query = 'INSERT INTO Page (title, content) VALUES (?, ?)';
 
-  connection.query(query, [userId, title, components], (err, results) => {
+  connection.query(query, [title, content], (err, results) => {
     if (err) {
       console.error('Error adding page to the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
     }
 
-    return res.json({ message: 'Page added successfully', pageId: results.insertId });
+    const pageId = results.insertId;
+    const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
+    connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
+      if (err) {
+        console.error('Error linking user to page:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err });
+      }
+
+      return res.json({ message: 'Page added successfully', pageId });
+    });
   });
 });
 
