@@ -7,7 +7,7 @@ const LandingPage = () => (
     <div className='navbar'>
       <h2>ZapišiSi</h2>
       <div className='buttons'>
-        <Link to="/signin"><button className='topbar-signin'><b>Back</b></button></Link>
+        <Link to="/signin"><button className='topbar-signin'><b>Sign in</b></button></Link>
         <Link to="/signup"><button className='topbar-signup'><b>Sign up</b></button></Link>
       </div>
     </div>
