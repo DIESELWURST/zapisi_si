@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './signUp.css';
+import './signIn.css';
 
-const SignUp = () => {
+const SignIn = () => {
   const [credentials, setCreds] = useState('');
   const [password, setPassword] = useState('');
-  const [CredsError, setCredsError] = useState('');
+  const [credsError, setCredsError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-  
-  const checkCreds = async (credentials,password) => {
+
+  const checkCreds = async (credentials, password) => {
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/check-credentials?credentials=${credentials}&password=${password}`);
       const data = await response.json();
@@ -26,10 +25,11 @@ const SignUp = () => {
 
     let valid = true;
 
-    const correctCreds = await checkCreds(credentials,password);
+    const correctCreds = await checkCreds(credentials, password);
     if (correctCreds) {
+      // Handle successful sign-in
     } else {
-      setCredsError('It appears that either your log in or password is incorrect. Please try again.');
+      setCredsError('It appears that either your login or password is incorrect. Please try again.');
       valid = false;
     }
 
@@ -37,11 +37,12 @@ const SignUp = () => {
       return;
     }
 
+    // Additional logic for successful sign-in can be added here
   };
 
-  return  (
+  return (
     <div>
-            <Link to="/"><img src='../src/home.png' style= {{margin:'10px 0px 0px 10px'}}/></Link>
+      <Link to="/"><img src='../src/home.png' style={{ margin: '10px 0px 0px 10px' }} /></Link>
       <div className='auth-container'>
         <div className="bee-divider">
           <div className="bee-line"></div>
@@ -63,11 +64,11 @@ const SignUp = () => {
               type="text"
               name="username"
               id="username"
-              value={username}
+              value={credentials}
               onChange={(e) => setCreds(e.target.value)}
               required
             /> <br />
-            {CredsError && <p className="error">{CredsError}</p>}
+            {credsError && <p className="error">{credsError}</p>}
 
             <label htmlFor="password">Password:</label> <br />
             <div className="password-container">
@@ -83,9 +84,9 @@ const SignUp = () => {
                 type="button"
                 className="toggle-password"
                 onClick={() => setPasswordVisible(!passwordVisible)}
-                style= {{background:' white', border: 'none',height: '20px', width: '20px' ,marginTop: '-13px'}}
+                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-13px' }}
               >
-                <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"}  />
+                <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"} />
               </button>
             </div>
 
@@ -104,4 +105,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;
