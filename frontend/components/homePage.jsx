@@ -154,6 +154,7 @@ const HomePage = ({ pageTitle, components, setComponents, setPageTitle }) => {
         suppressContentEditableWarning
         onInput={handleTitleChange}
         onKeyDown={handleKeyDown}
+        style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif'}}
       >
         {editingTitle || "Untitled Page"}
       </div>
