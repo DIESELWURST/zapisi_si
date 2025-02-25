@@ -1,43 +1,36 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './signIn.css';
 
-const SignIn = () => {
+const SignIn = ({ setIsAuthenticated, setUser }) => {
   const [credentials, setCreds] = useState('');
   const [password, setPassword] = useState('');
   const [credsError, setCredsError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-
+  const navigate = useNavigate();
 
   const checkCreds = async (credentials, password) => {
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/check-credentials?credentials=${credentials}&password=${password}`);
       const data = await response.json();
-      return data.exists;
+      return data;
     } catch (error) {
       console.error('Error checking password:', error);
       return false;
     }
   };
 
-  const handleSignUp = async (event) => {
+  const handleSignIn = async (event) => {
     event.preventDefault();
 
-    let valid = true;
-
-    const correctCreds = await checkCreds(credentials, password);
-    if (correctCreds) {
-      // Handle successful sign-in
+    const result = await checkCreds(credentials, password);
+    if (result.exists) {
+      setIsAuthenticated(true);
+      setUser(result.user); // Assuming the backend returns user information
+      navigate('/app');
     } else {
       setCredsError('It appears that either your login or password is incorrect. Please try again.');
-      valid = false;
     }
-
-    if (!valid) {
-      return;
-    }
-
-    // Additional logic for successful sign-in can be added here
   };
 
   return (
@@ -57,7 +50,7 @@ const SignIn = () => {
             <div className="bee-hexagon"></div>
             <div className="bee-line"></div>
           </div>
-          <form onSubmit={handleSignUp}>
+          <form onSubmit={handleSignIn}>
             <h2 style={{marginBottom:'25px'}}>Sign in</h2>
             <label htmlFor="username">Username or email:</label> <br />
             <input

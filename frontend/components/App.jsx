@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import SideBar from "./sideBar";
 import RightBar from "./rightBar";
@@ -9,31 +9,29 @@ import SignIn from "./signIn";
 import "./styles.css";
 
 const App = () => {
-  const [pages, setPages] = useState([
-    {
-      id: 1,
-      title: "Getting Started",
-      components: [
-        { id: 1, type: "textBlock", content: "Welcome to your page!" },
-        {
-          id: 2,
-          type: "checklist",
-          items: [
-            { id: 1, content: "Click and type anywhere", checked: false },
-            { id: 2, content: "Drag items to reorder them", checked: false },
-          ],
-        },
-        {
-          id: 3,
-          type: "toggleBlock",
-          title: "This is a toggle block. Click the little triangle to see more useful tips!",
-          content: `• Highlight any text, and use the menu that pops up to **style** *your* ~~writing~~ however [you] like.\n• Click the **+ New Page** button at the bottom of your sidebar to add a new page.`,
-        },
-      ],
-    },
-  ]);
-  const [currentPageId, setCurrentPageId] = useState(1);
+  const [pages, setPages] = useState([]);
+  const [currentPageId, setCurrentPageId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      fetchUserPages(user.id);
+    }
+  }, [isAuthenticated, user]);
+
+  const fetchUserPages = async (userId) => {
+    try {
+      const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
+      const data = await response.json();
+      setPages(data.pages);
+      if (data.pages.length > 0) {
+        setCurrentPageId(data.pages[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching user pages:', error);
+    }
+  };
 
   const addNewPage = () => {
     const newPageId = pages.length + 1;
@@ -83,7 +81,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} setUser={setUser} />} />
         <Route
           path="/app"
           element={
