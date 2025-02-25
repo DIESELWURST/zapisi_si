@@ -70,7 +70,7 @@ const SignIn = () => {
             /> <br />
             {credsError && <p className="error">{credsError}</p>}
 
-            <label htmlFor="password">Password:</label> <br />
+            <label htmlFor="password" style={{marginBottom:'25px'}}>Password:</label> <br />
             <div className="password-container">
               <input
                 type={passwordVisible ? "text" : "password"}
@@ -85,7 +85,7 @@ const SignIn = () => {
                 type="button"
                 className="toggle-password"
                 onClick={() => setPasswordVisible(!passwordVisible)}
-                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-30px', marginBottom: '50px' }}
+                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-40px', marginBottom: '50px' }}
               >
                 <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"} />
               </button>
