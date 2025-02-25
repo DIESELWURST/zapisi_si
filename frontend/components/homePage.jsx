@@ -146,8 +146,7 @@ const HomePage = ({ pageTitle, components, setComponents, setPageTitle }) => {
 
   return (
   <div className="flex">
-    <div className=" bg-black text-white p-6 ml-40"   style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif'}}
-      >
+    <div >
       <div
         ref={titleRef}
         className="pageName"
