@@ -104,6 +104,7 @@ const App = () => {
       return page;
     });
     setPages(updatedPages);
+    saveData();
     debounceSave();
   };
 
