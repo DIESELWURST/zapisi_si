@@ -150,13 +150,19 @@ const App = () => {
     const currentPage = pages.find((page) => page.page_id === currentPageId);
     if (!currentPage) return;
 
+    // Ensure content is serialized to JSON string
+    const pageData = {
+      ...currentPage,
+      content: JSON.stringify(currentPage.content),
+    };
+
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/update-page`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(currentPage),
+        body: JSON.stringify(pageData),
       });
 
       if (!response.ok) {
