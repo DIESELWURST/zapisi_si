@@ -109,7 +109,7 @@ app.post('/api/add-user', (req, res) => {
       ]),
     };
 
-    const pageQuery = 'INSERT INTO Pages (userId, title, components) VALUES (?, ?, ?)';
+    const pageQuery = 'INSERT INTO Page (userId, title, components) VALUES (?, ?, ?)';
     connection.query(pageQuery, [userId, defaultPage.title, defaultPage.components], (err, pageResults) => {
       if (err) {
         console.error('Error creating default page:', err);
@@ -152,7 +152,7 @@ app.get('/api/user-pages', (req, res) => {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
-  const query = 'SELECT * FROM Pages WHERE userId = ?';
+  const query = 'SELECT * FROM Page WHERE userId = ?';
 
   connection.query(query, [userId], (err, results) => {
     if (err) {
@@ -171,7 +171,7 @@ app.post('/api/add-page', (req, res) => {
     return res.status(400).json({ error: 'User ID, title, and components are required' });
   }
 
-  const query = 'INSERT INTO Pages (userId, title, components) VALUES (?, ?, ?)';
+  const query = 'INSERT INTO pages (userId, title, components) VALUES (?, ?, ?)';
 
   connection.query(query, [userId, title, components], (err, results) => {
     if (err) {
