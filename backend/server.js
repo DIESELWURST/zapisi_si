@@ -49,9 +49,7 @@ app.get('/api/user-exists', (req, res) => {
   });
 });
 
-
-
-// Endpoint , ki pregleda, če obstaja vnesen uporabnik
+// Endpoint to check if a user exists by email
 app.get('/api/mail-exists', (req, res) => {
   const mail = req.query.mail;
   if (!mail) {
@@ -74,7 +72,7 @@ app.get('/api/mail-exists', (req, res) => {
   });
 });
 
-// Endpoint, ki doda novega uporabnika
+// Endpoint to add a new user and create a default page
 app.post('/api/add-user', (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
@@ -132,9 +130,7 @@ app.post('/api/add-user', (req, res) => {
   });
 });
 
-
-
-// Endpoint , ki pregleduje vpis uporabnika
+// Endpoint to check user credentials
 app.get('/api/check-credentials', (req, res) => {
   const credentials = req.query.credentials;
   const password = req.query.password;
@@ -158,7 +154,7 @@ app.get('/api/check-credentials', (req, res) => {
   });
 });
 
-// Endpoint preko katerega posegamo po  straneh uporabnika
+// Endpoint to fetch user pages
 app.get('/api/user-pages', (req, res) => {
   const userId = req.query.userId;
   if (!userId) {
