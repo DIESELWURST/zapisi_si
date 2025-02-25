@@ -120,7 +120,24 @@ app.get('/api/check-credentials', (req, res) => {
   });
 });
 
+// Endpoint preko katerega posegamo po  straneh uporabnika
+app.get('/api/user-pages', (req, res) => {
+  const userId = req.query.userId;
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
 
+  const query = 'SELECT * FROM Pages WHERE userId = ?';
+
+  connection.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    return res.json({ pages: results });
+  });
+});
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
