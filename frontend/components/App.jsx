@@ -40,7 +40,7 @@ const App = () => {
   const addNewPage = async () => {
     const newPage = {
       userId: user.user_id,
-      title: `Page ${pages.length + 1}`,
+      title: `Welcome to ZapišiSi!`,
       content: JSON.stringify([
         { id: 1, type: "textBlock", content: `Getting Started!` },
         {
