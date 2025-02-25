@@ -85,7 +85,7 @@ const SignIn = () => {
                 type="button"
                 className="toggle-password"
                 onClick={() => setPasswordVisible(!passwordVisible)}
-                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-20px' }}
+                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-30px', marginBottom: '50px' }}
               >
                 <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"} />
               </button>
