@@ -1,102 +1,125 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './signIn.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import SideBar from "./sideBar";
+import RightBar from "./rightBar";
+import CurrentPage from "./currentPage";
+import LandingPage from "./landingPage";
+import SignUp from "./signUp";
+import SignIn from "./signIn";
+import "../components/styles.css";
 
-const SignIn = ({ setIsAuthenticated, setUser }) => {
-  const [credentials, setCreds] = useState('');
-  const [password, setPassword] = useState('');
-  const [credsError, setCredsError] = useState('');
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const navigate = useNavigate();
+const App = () => {
+  const [pages, setPages] = useState([
+    {
+      id: 1,
+      title: "Getting Started",
+      components: [
+        { id: 1, type: "textBlock", content: "Welcome to your page!" },
+        {
+          id: 2,
+          type: "checklist",
+          items: [
+            { id: 1, content: "Click and type anywhere", checked: false },
+            { id: 2, content: "Drag items to reorder them", checked: false },
+          ],
+        },
+        {
+          id: 3,
+          type: "toggleBlock",
+          title: "This is a toggle block. Click the little triangle to see more useful tips!",
+          content: `• Highlight any text, and use the menu that pops up to **style** *your* ~~writing~~ however [you] like.\n• Click the **+ New Page** button at the bottom of your sidebar to add a new page.`,
+        },
+      ],
+    },
+  ]);
+  const [currentPageId, setCurrentPageId] = useState(1);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const checkCreds = async (credentials, password) => {
-    try {
-      const response = await fetch(`https://backend-production-fbab.up.railway.app/api/check-credentials?credentials=${credentials}&password=${password}`);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error checking password:', error);
-      return false;
-    }
+  const addNewPage = () => {
+    const newPageId = pages.length + 1;
+    const newPage = {
+      id: newPageId,
+      title: `Page ${newPageId}`,
+      components: [
+        { id: 1, type: "textBlock", content: `Welcome to Page ${newPageId}!` },
+        {
+          id: 2,
+          type: "checklist",
+          items: [
+            { id: 1, content: "Click and type anywhere", checked: false },
+            { id: 2, content: "Drag items to reorder them", checked: false },
+          ],
+        },
+        {
+          id: 3,
+          type: "toggleBlock",
+          title: "This is a toggle block.",
+          content: "Here's some info about toggles.",
+        },
+      ],
+    };
+    setPages([...pages, newPage]);
+    setCurrentPageId(newPageId);
   };
 
-  const handleSignIn = async (event) => {
-    event.preventDefault();
-
-    const result = await checkCreds(credentials, password);
-    if (result.exists) {
-      setIsAuthenticated(true);
-      setUser(result.user); // Assuming the backend returns user information
-      navigate('/app');
-    } else {
-      setCredsError('It appears that either your login or password is incorrect. Please try again.');
-    }
+  const selectPage = (id) => {
+    setCurrentPageId(id);
   };
+
+  const updatePageTitle = (newTitle) => {
+    const updatedPages = pages.map((page) => {
+      if (page.id === currentPageId) {
+        return { ...page, title: newTitle };
+      }
+      return page;
+    });
+    setPages(updatedPages);
+  };
+
+  const currentPage = pages.find((page) => page.id === currentPageId);
 
   return (
-    <div>
-      <Link to="/"><img src='../src/home.png' style={{ margin: '10px 0px 0px 10px' }} /></Link>
-      <div className='auth-container'>
-        <div className="bee-divider">
-          <div className="bee-line"></div>
-          <div className="bee-hexagon with-image">
-            <img src="assets/images/maja.png" alt="Bee" />
-          </div>
-          <div className="bee-line"></div>
-        </div>
-        <div className="kontakt" id="kontakt">
-          <div className="bee-divider" style={{marginBottom:'25px'}}>
-            <div className="bee-line"></div>
-            <div className="bee-hexagon"></div>
-            <div className="bee-line"></div>
-          </div>
-          <form onSubmit={handleSignIn}>
-            <h2 style={{marginBottom:'25px'}}>Sign in</h2>
-            <label htmlFor="username">Username or email:</label> <br />
-            <input
-              type="text"
-              name="username"
-              id="username"
-              value={credentials}
-              onChange={(e) => setCreds(e.target.value)}
-              required
-            /> <br />
-            {credsError && <p className="error">{credsError}</p>}
-
-            <label htmlFor="password" style={{marginBottom:'10px'}}>Password:</label> <br />
-            <div className="password-container">
-              <input
-                type={passwordVisible ? "text" : "password"}
-                name="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{marginBottom:'50px'}}
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-32px', marginBottom: '50px' }}
-              >
-                <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"} />
-              </button>
-            </div>
-
-            <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-          </form>
-        </div>
-        <div className="bee-divider">
-          <div className="bee-line"></div>
-          <div className="bee-hexagon with-image">
-            <img src="assets/images/maja.png" alt="Bee" />
-          </div>
-          <div className="bee-line"></div>
-        </div>
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />
+        <Route
+          path="/app"
+          element={
+            isAuthenticated ? (
+              <div className="app-container">
+                <SideBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
+                <RightBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
+                <div className="flex-1">
+                  {currentPage ? (
+                    <CurrentPage
+                      pageTitle={currentPage.title}
+                      components={currentPage.components}
+                      setComponents={(newComponents) => {
+                        const newPages = pages.map((page) => {
+                          if (page.id === currentPageId) {
+                            return { ...page, components: newComponents };
+                          }
+                          return page;
+                        });
+                        setPages(newPages);
+                      }}
+                      setPageTitle={updatePageTitle}
+                    />
+                  ) : (
+                    <h1>Please select or create a page</h1>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <Navigate to="/signin" />
+            )
+          }
+        />
+      </Routes>
+    </Router>
   );
 };
 
-export default SignIn;
+export default App;
