@@ -86,6 +86,49 @@ app.post('/api/add-user', (req, res) => {
       console.error('Error adding user to the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
     }
+
+    const userId = results.insertId;
+
+    const defaultPage = {
+      userId: userId,
+      title: 'Welcome to ZapišiSi!',
+      content: JSON.stringify([
+        { id: 1, type: "textBlock", content: "Getting Started!" },
+        {
+          id: 2,
+          type: "checklist",
+          items: [
+            { id: 1, content: "Click and type anywhere", checked: false },
+            { id: 2, content: "Drag items to reorder them", checked: false },
+          ],
+        },
+        {
+          id: 3,
+          type: "toggleBlock",
+          title: "This is a toggle block.",
+          content: "Here's some info about toggles.",
+        },
+      ]),
+    };
+
+    const pageQuery = 'INSERT INTO Page (title, content) VALUES (?, ?)';
+    connection.query(pageQuery, [defaultPage.title, defaultPage.content], (err, pageResults) => {
+      if (err) {
+        console.error('Error creating default page:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err });
+      }
+
+      const pageId = pageResults.insertId;
+      const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
+      connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
+        if (err) {
+          console.error('Error linking user to page:', err);
+          return res.status(500).json({ error: 'Internal server error', details: err });
+        }
+
+        return res.json({ message: 'User and default page added successfully' });
+      });
+    });
   });
 });
 
@@ -162,6 +205,25 @@ app.post('/api/add-page', (req, res) => {
 
       return res.json({ message: 'Page added successfully', pageId });
     });
+  });
+});
+
+// Endpoint to update a page
+app.post('/api/update-page', (req, res) => {
+  const { page_id, title, content } = req.body;
+  if (!page_id || !title || !content) {
+    return res.status(400).json({ error: 'Page ID, title, and content are required' });
+  }
+
+  const query = 'UPDATE Page SET title = ?, content = ? WHERE page_id = ?';
+
+  connection.query(query, [title, content, page_id], (err, results) => {
+    if (err) {
+      console.error('Error updating page:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    return res.json({ message: 'Page updated successfully' });
   });
 });
 

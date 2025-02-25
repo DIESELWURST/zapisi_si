@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import SideBar from "./sideBar";
 import RightBar from "./rightBar";
@@ -13,12 +13,28 @@ const App = () => {
   const [currentPageId, setCurrentPageId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [typingTimeout, setTypingTimeout] = useState(null);
 
   useEffect(() => {
     if (isAuthenticated && user) {
       fetchUserPages(user.user_id);
     }
   }, [isAuthenticated, user]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault();
+        saveData();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentPageId, pages]);
 
   const fetchUserPages = async (userId) => {
     try {
@@ -88,6 +104,49 @@ const App = () => {
       return page;
     });
     setPages(updatedPages);
+    debounceSave();
+  };
+
+  const updateComponents = (newComponents) => {
+    const updatedPages = pages.map((page) => {
+      if (page.page_id === currentPageId) {
+        return { ...page, content: newComponents };
+      }
+      return page;
+    });
+    setPages(updatedPages);
+    debounceSave();
+  };
+
+  const debounceSave = () => {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+    const timeout = setTimeout(() => {
+      saveData();
+    }, 1000);
+    setTypingTimeout(timeout);
+  };
+
+  const saveData = async () => {
+    const currentPage = pages.find((page) => page.page_id === currentPageId);
+    if (!currentPage) return;
+
+    try {
+      const response = await fetch(`https://backend-production-fbab.up.railway.app/api/update-page`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(currentPage),
+      });
+
+      if (!response.ok) {
+        console.error('Error saving page data:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error saving page data:', error);
+    }
   };
 
   const currentPage = pages.find((page) => page.page_id === currentPageId);
@@ -110,15 +169,7 @@ const App = () => {
                     <CurrentPage
                       pageTitle={currentPage.title}
                       components={Array.isArray(currentPage.content) ? currentPage.content : []}
-                      setComponents={(newComponents) => {
-                        const newPages = pages.map((page) => {
-                          if (page.page_id === currentPageId) {
-                            return { ...page, content: newComponents };
-                          }
-                          return page;
-                        });
-                        setPages(newPages);
-                      }}
+                      setComponents={updateComponents}
                       setPageTitle={updatePageTitle}
                     />
                   ) : (
