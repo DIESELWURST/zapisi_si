@@ -19,7 +19,7 @@ const RightBar = () => {
   };
 
   return (
-    <div>
+    <div style= {{   fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif'}}>
       <button 
         className={`rightbar-button ${sidebarVisible ? 'open' : ''}`} 
         onClick={toggleSidebar} 
