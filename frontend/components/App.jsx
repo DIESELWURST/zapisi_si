@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import SideBar from "./sideBar";
 import RightBar from "./rightBar";
@@ -10,7 +10,7 @@ import "./styles.css";
 
 const App = () => {
   const [pages, setPages] = useState([]);
-  const [currentPageId, setCurrentPageId] = useState(null);
+  const [currentPageId, setCurrentPageId] = useState(localStorage.getItem('currentPageId'));
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
@@ -36,13 +36,28 @@ const App = () => {
     };
   }, [currentPageId, pages]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (typingTimeout) {
+        event.preventDefault();
+        event.returnValue = 'You have unsaved changes. Do you really want to leave?';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [typingTimeout]);
+
   const fetchUserPages = async (userId) => {
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
       const data = await response.json();
       if (data.pages) {
         setPages(data.pages);
-        if (data.pages.length > 0) {
+        if (data.pages.length > 0 && !currentPageId) {
           setCurrentPageId(data.pages[0].page_id);
         }
       } else {
@@ -85,8 +100,10 @@ const App = () => {
         body: JSON.stringify(newPage),
       });
       const data = await response.json();
-      setPages([...pages, { ...newPage, page_id: data.pageId }]);
+      const newPageWithId = { ...newPage, page_id: data.pageId };
+      setPages([...pages, newPageWithId]);
       setCurrentPageId(data.pageId);
+      localStorage.setItem('currentPageId', data.pageId);
     } catch (error) {
       console.error('Error adding new page:', error);
     }
@@ -94,6 +111,7 @@ const App = () => {
 
   const selectPage = (id) => {
     setCurrentPageId(id);
+    localStorage.setItem('currentPageId', id);
   };
 
   const updatePageTitle = (newTitle) => {
@@ -104,7 +122,6 @@ const App = () => {
       return page;
     });
     setPages(updatedPages);
-    saveData();
     debounceSave();
   };
 
