@@ -190,7 +190,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn setIsAuthenticated={handleSignIn} />} />
+        <Route path="/signin" element={<SignIn setIsAuthenticated={handleSignIn} setUser={setUser} />} />
         <Route
           path="/app"
           element={
