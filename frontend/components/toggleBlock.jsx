@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import Formater from "./Formater";
-import "./styles.css";
+import "../components/styles.css";
 
 const ToggleBlock = ({
   title,

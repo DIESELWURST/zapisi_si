@@ -10,21 +10,21 @@ const SideBar = ({ pages, onNewPage, onSelectPage }) => {
 
   return (
     <div className="sidebar-container">
-        <input 
-          type="checkbox" 
-          id="sidebar-toggle" 
-          className="sidebar-butt" 
-          checked={sidebarVisible}
-          onChange={toggleSidebar} 
-        />
+      <input 
+        type="checkbox" 
+        id="sidebar-toggle" 
+        className="sidebar-butt" 
+        checked={sidebarVisible}
+        onChange={toggleSidebar} 
+      />
       <div className={`sidebar ${sidebarVisible ? '' : 'sidebar--hidden'}`}>
         <button onClick={onNewPage} className="new-page-button">New Page</button>
         <div className="page-list">
           <h3>Pages</h3>
           {pages.map((page) => (
             <button
-              key={page.id}
-              onClick={() => onSelectPage(page.id)}
+              key={page.page_id}
+              onClick={() => onSelectPage(page.page_id)}
               className="sidebar-button"
             >
               {page.title || "Untitled Page"} 

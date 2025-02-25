@@ -82,7 +82,7 @@ const App = () => {
 
   const updatePageTitle = (newTitle) => {
     const updatedPages = pages.map((page) => {
-      if (page.id === currentPageId) {
+      if (page.page_id === currentPageId) {
         return { ...page, title: newTitle };
       }
       return page;
@@ -90,7 +90,7 @@ const App = () => {
     setPages(updatedPages);
   };
 
-  const currentPage = pages.find((page) => page.id === currentPageId);
+  const currentPage = pages.find((page) => page.page_id === currentPageId);
 
   return (
     <Router>
@@ -104,16 +104,16 @@ const App = () => {
             isAuthenticated ? (
               <div className="app-container">
                 <SideBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
-                <RightBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
+                <RightBar />
                 <div className="flex-1">
                   {currentPage ? (
                     <CurrentPage
                       pageTitle={currentPage.title}
-                      components={currentPage.components}
+                      components={currentPage.content}
                       setComponents={(newComponents) => {
                         const newPages = pages.map((page) => {
-                          if (page.id === currentPageId) {
-                            return { ...page, components: newComponents };
+                          if (page.page_id === currentPageId) {
+                            return { ...page, content: newComponents };
                           }
                           return page;
                         });

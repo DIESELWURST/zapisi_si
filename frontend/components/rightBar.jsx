@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './styles.css'; 
 
-const RightBar = ({ pages, onNewPage, onSelectPage }) => {
+const RightBar = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [isIndented, setIsIndented] = useState(false);
 
