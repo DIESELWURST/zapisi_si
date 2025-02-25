@@ -11,8 +11,8 @@ import "./styles.css";
 const App = () => {
   const [pages, setPages] = useState([]);
   const [currentPageId, setCurrentPageId] = useState(localStorage.getItem('currentPageId'));
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated') === 'true');
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [typingTimeout, setTypingTimeout] = useState(null);
 
   useEffect(() => {
@@ -167,6 +167,22 @@ const App = () => {
     }
   };
 
+  const handleSignIn = (user) => {
+    setIsAuthenticated(true);
+    setUser(user);
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('user', JSON.stringify(user));
+  };
+
+  const handleSignOut = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+    setCurrentPageId(null);
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('user');
+    localStorage.removeItem('currentPageId');
+  };
+
   const currentPage = pages.find((page) => page.page_id === currentPageId);
 
   return (
@@ -174,7 +190,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn setIsAuthenticated={setIsAuthenticated} setUser={setUser} />} />
+        <Route path="/signin" element={<SignIn setIsAuthenticated={handleSignIn} />} />
         <Route
           path="/app"
           element={
