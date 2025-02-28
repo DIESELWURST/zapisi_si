@@ -167,7 +167,10 @@ const App = () => {
       });
 
       if (!response.ok) {
-        console.error('Error saving page data:', await response.json());
+        const errorData = await response.json();
+        console.error('Error saving page data:', errorData);
+      } else {
+        console.log('Page data saved successfully');
       }
     } catch (error) {
       console.error('Error saving page data:', error);
