@@ -67,7 +67,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
   
     const timeout = setTimeout(() => {
       setPageTitle(titleRef.current.innerText.trim());
-    }, 1000);
+    }, 1500);
   
     setTypingTimeout(timeout);
   };

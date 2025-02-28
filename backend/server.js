@@ -3,6 +3,8 @@ import mysql from 'mysql2';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 
 dotenv.config();
 
@@ -25,6 +27,47 @@ connection.connect(err => {
   }
   console.log('Connected to the MySQL database.');
 });
+
+// Configure nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// Generate OTP
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+// Send verification code
+const sendVerificationCode = async (email) => {
+  const otp = generateOTP();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
+
+  const query = 'UPDATE User SET verification_code = ?, verification_expires = ? WHERE email = ?';
+  connection.query(query, [otp, expiresAt, email], (err, results) => {
+    if (err) {
+      console.error('Error updating verification code:', err);
+      return;
+    }
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Verify Your Email',
+      text: `Your verification code is: ${otp}`,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error('Error sending verification email:', err);
+      } else {
+        console.log('Verification email sent:', info.response);
+      }
+    });
+  });
+};
 
 // Endpoint to check if a user exists by username
 app.get('/api/user-exists', (req, res) => {
@@ -126,7 +169,9 @@ app.post('/api/add-user', (req, res) => {
           return res.status(500).json({ error: 'Internal server error', details: err });
         }
 
-        return res.json({ message: 'User and default page added successfully' });
+        sendVerificationCode(email);
+
+        return res.json({ message: 'User and default page added successfully. Please verify your email.' });
       });
     });
   });
@@ -224,6 +269,46 @@ app.post('/api/update-page', (req, res) => {
     }
 
     return res.json({ message: 'Page updated successfully' });
+  });
+});
+
+// Endpoint za potrditev maila
+
+  app.post('api/confirm-email', (req,res) => {
+    const {email} = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+  });
+
+// Endpoint to verify OTP
+app.post('/api/verify-email', (req, res) => {
+  const { email, code } = req.body;
+  if (!email || !code) {
+    return res.status(400).json({ error: 'Email and verification code are required' });
+  }
+
+  const query = 'SELECT verification_code, verification_expires FROM User WHERE email = ?';
+  connection.query(query, [email], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    if (results.length === 0 || results[0].verification_code !== code || new Date() > new Date(results[0].verification_expires)) {
+      return res.status(400).json({ error: 'Invalid or expired verification code' });
+    }
+
+    const updateQuery = 'UPDATE User SET verified = 1, verification_code = NULL, verification_expires = NULL WHERE email = ?';
+    connection.query(updateQuery, [email], (err, updateResults) => {
+      if (err) {
+        console.error('Error updating user status:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err });
+      }
+
+      return res.json({ message: 'Email verified successfully' });
+    });
   });
 });
 
