@@ -218,7 +218,12 @@ const App = () => {
                       setPageTitle={updatePageTitle}
                     />
                   ) : (
-                    <h1>Please select or create a page</h1>
+                    <CurrentPage
+                      pageTitle={pages[0].title}
+                      components={Array.isArray(pages[0].content) ? pages[0].content : []}
+                      setComponents={updateComponents}
+                      setPageTitle={updatePageTitle}
+                    />
                   )}
                 </div>
               </div>
