@@ -218,12 +218,14 @@ const App = () => {
                       setPageTitle={updatePageTitle}
                     />
                   ) : (
-                    <CurrentPage
-                      pageTitle={pages[0].title}
-                      components={Array.isArray(pages[0].content) ? pages[0].content : []}
-                      setComponents={updateComponents}
-                      setPageTitle={updatePageTitle}
-                    />
+                    pages.length > 0 && (
+                      <CurrentPage
+                        pageTitle={pages[0].title}
+                        components={Array.isArray(pages[0].content) ? pages[0].content : []}
+                        setComponents={updateComponents}
+                        setPageTitle={updatePageTitle}
+                      />
+                    )
                   )}
                 </div>
               </div>
