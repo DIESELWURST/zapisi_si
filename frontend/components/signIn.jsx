@@ -28,6 +28,8 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
       setIsAuthenticated(true);
       setUser(result.user); // Assuming the backend returns user information
       navigate('/app');
+    } else if (result.error) {
+      setCredsError(result.error);
     } else {
       setCredsError('It appears that either your login or password is incorrect. Please try again.');
     }
