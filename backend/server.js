@@ -193,7 +193,11 @@ app.get('/api/check-credentials', (req, res) => {
     }
 
     if (results.length > 0) {
-      return res.json({ exists: true, user: results[0], message: '1' });
+      const user = results[0];
+      if (!user.verified) {
+        return res.status(403).json({ error: 'Email not verified. Please verify your email before signing in.' });
+      }
+      return res.json({ exists: true, user, message: '1' });
     } else {
       return res.json({ exists: false, message: '0' });
     }
