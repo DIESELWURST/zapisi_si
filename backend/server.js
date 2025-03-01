@@ -3,7 +3,6 @@ import mysql from 'mysql2';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
 dotenv.config();
@@ -271,16 +270,6 @@ app.post('/api/update-page', (req, res) => {
     return res.json({ message: 'Page updated successfully' });
   });
 });
-
-// Endpoint za potrditev maila
-
-  app.post('api/confirm-email', (req,res) => {
-    const {email} = req.body;
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
-    }
-
-  });
 
 // Endpoint to verify OTP
 app.post('/api/verify-email', (req, res) => {
