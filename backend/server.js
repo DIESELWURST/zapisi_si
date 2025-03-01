@@ -3,7 +3,7 @@ import mysql from 'mysql2';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 
 dotenv.config();
 
@@ -27,14 +27,8 @@ connection.connect(err => {
   console.log('Connected to the MySQL database.');
 });
 
-// Configure nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// Configure SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Generate OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -51,20 +45,20 @@ const sendVerificationCode = async (email) => {
       return;
     }
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    const msg = {
       to: email,
+      from: process.env.SENDGRID_SENDER, // Use the verified email address
       subject: 'Verify Your Email',
       text: `Your verification code is: ${otp}`,
     };
 
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error('Error sending verification email:', err);
-      } else {
-        console.log('Verification email sent:', info.response);
-      }
-    });
+    sgMail.send(msg)
+      .then(() => {
+        console.log('Verification email sent');
+      })
+      .catch((error) => {
+        console.error('Error sending verification email:', error);
+      });
   });
 };
 
@@ -236,7 +230,6 @@ app.post('/api/add-page', (req, res) => {
   }
 
   const query = 'INSERT INTO Page (title, content) VALUES (?, ?)';
-
   connection.query(query, [title, content], (err, results) => {
     if (err) {
       console.error('Error adding page to the database:', err);
