@@ -56,7 +56,7 @@ const App = () => {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
       const data = await response.json();
       if (data.pages) {
-        setPages(parsedPages);
+        setPages(data.pages);
         if (parsedPages.length > 0 && !currentPageId) {
           setCurrentPageId(parsedPages[0].page_id);
         }
