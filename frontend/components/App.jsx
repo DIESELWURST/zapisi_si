@@ -86,7 +86,7 @@ const App = () => {
           id: 3,
           type: "toggleBlock",
           title: "This is a toggle block.",
-          content: "Here's some info about toggles.",
+          content: "• Here's some info about toggles.",
         },
       ]),
     };
