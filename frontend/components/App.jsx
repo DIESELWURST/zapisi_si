@@ -56,9 +56,13 @@ const App = () => {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
       const data = await response.json();
       if (data.pages) {
-        setPages(data.pages);
-        if (data.pages.length > 0 && !currentPageId) {
-          setCurrentPageId(data.pages[0].page_id);
+        const parsedPages = data.pages.map(page => ({
+          ...page,
+          content: JSON.parse(page.content)
+        }));
+        setPages(parsedPages);
+        if (parsedPages.length > 0 && !currentPageId) {
+          setCurrentPageId(parsedPages[0].page_id);
         }
       } else {
         setPages([]);
@@ -100,7 +104,7 @@ const App = () => {
         body: JSON.stringify(newPage),
       });
       const data = await response.json();
-      const newPageWithId = { ...newPage, page_id: data.pageId };
+      const newPageWithId = { ...newPage, page_id: data.pageId, content: JSON.parse(newPage.content) };
       setPages([...pages, newPageWithId]);
       setCurrentPageId(data.pageId);
       localStorage.setItem('currentPageId', data.pageId);

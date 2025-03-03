@@ -67,7 +67,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
   
     const timeout = setTimeout(() => {
       setPageTitle(titleRef.current.innerText.trim());
-    }, 1500);
+    }, 1000);
   
     setTypingTimeout(timeout);
   };
@@ -78,11 +78,9 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
     }
   };
 
-
   useEffect(() => {
     setEditingTitle(pageTitle); 
   }, [pageTitle]);
-
 
   const renderComponent = (component, index) => {
     switch (component.type) {
@@ -145,22 +143,23 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
   };
 
   return (
-  <div className="flex">
-    <div className=" bg-black text-white p-6 ml-40">
-      <div
-        ref={titleRef}
-        className="pageName"
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleTitleChange}
-        onKeyDown={handleKeyDown}
-      >
-        {editingTitle || "Untitled Page"}
-      </div>
+    <div className="flex">
+      <div className=" bg-black text-white p-6 ml-40">
+        <div
+          ref={titleRef}
+          className="pageName"
+          contentEditable
+          suppressContentEditableWarning
+          onInput={handleTitleChange}
+          onKeyDown={handleKeyDown}
+        >
+          {editingTitle || "Untitled Page"}
+        </div>
 
-      {components.map((component, index) => renderComponent(component, index))}
+        {components.map((component, index) => renderComponent(component, index))}
+      </div>
     </div>
-  </div>
   );
-}
+};
+
 export default CurrentPage;
