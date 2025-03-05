@@ -57,8 +57,8 @@ const App = () => {
       const data = await response.json();
       if (data.pages) {
         setPages(data.pages);
-        if (parsedPages.length > 0 && !currentPageId) {
-          setCurrentPageId(parsedPages[0].page_id);
+        if (data.pages.length > 0 && !currentPageId) {
+          setCurrentPageId(data.pages[0].page_id);
         }
       } else {
         setPages([]);
