@@ -131,6 +131,11 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
               newComponents[index].content = newContent;
               setComponents(newComponents);
             }}
+            onTitleUpdate={(newTitle) => {
+              const newComponents = [...components];
+              newComponents[index].title = newTitle;
+              setComponents(newComponents);
+            }}
             onDragStart={() => handleDragStart(index)}
             onDragEnter={() => handleDragEnter(index)}
             onDragEnd={handleDragEnd}
