@@ -41,7 +41,7 @@ const ToggleBlock = ({
   };
 
   const handleTitleChange = (event) => {
-    const newTitle = event.target.innerText;
+    const newTitle = event.target.innerText.replace(/^[▼▶]\s*/, ""); 
     onTitleUpdate(newTitle); 
   };
 
