@@ -55,6 +55,7 @@ const App = () => {
   const fetchUserPages = async (userId) => {
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
+      localStorage.setItem('userId', userId); // Store user ID in local storage
       const data = await response.json();
       if (data.pages) {
         setPages(data.pages);
@@ -187,7 +188,6 @@ const App = () => {
     }
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('userId', user.user_id); // Store user ID in local storage
   };
 
   const handleSignOut = () => {
