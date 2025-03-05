@@ -210,6 +210,7 @@ app.get('/api/user-pages', (req, res) => {
     FROM Page
     JOIN Owner ON Page.page_id = Owner.page_id
     WHERE Owner.user_id = ?
+    Order by Page.last_edited DESC
   `;
 
   connection.query(query, [userId], (err, results) => {
