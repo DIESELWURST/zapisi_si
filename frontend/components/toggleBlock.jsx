@@ -85,15 +85,17 @@ const ToggleBlock = ({
       >
         <button className="drag-handle">⋮⋮</button>
         <button className="add-button" onClick={onAddComponent}>+</button>
-        <div
-          onClick={() => setIsOpen(!isOpen)}
-          className="cursor-pointer toggle-header text"
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={handleTitleChange}
-          onContextMenu={handleContextMenu}
-        >
-          {isOpen ? "▼" : "▶"} {title}
+        <div className="cursor-pointer toggle-header">
+          <span onClick={() => setIsOpen(!isOpen)}>{isOpen ? "▼" : "▶"}</span>
+          <span
+            className="text"
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={handleTitleChange}
+            onContextMenu={handleContextMenu}
+          >
+            {title}
+          </span>
         </div>
       </div>
 
