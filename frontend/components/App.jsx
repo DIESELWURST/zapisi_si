@@ -16,11 +16,10 @@ const App = () => {
   const [typingTimeout, setTypingTimeout] = useState(null);
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId');
-    if (isAuthenticated && storedUserId) {
-      fetchUserPages(storedUserId);
+    if (isAuthenticated && user) {
+      fetchUserPages(user.user_id || localStorage.getItem('userId'));
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -187,7 +186,6 @@ const App = () => {
     }
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('userId', user.user_id); // Store user ID in local storage
   };
 
   const handleSignOut = () => {
@@ -197,7 +195,6 @@ const App = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('user');
     localStorage.removeItem('currentPageId');
-    localStorage.removeItem('userId'); // Remove user ID from local storage
   };
 
   const currentPage = pages.find((page) => page.page_id === currentPageId);
