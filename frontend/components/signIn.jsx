@@ -7,6 +7,9 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   const [password, setPassword] = useState('');
   const [credsError, setCredsError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpError, setOtpError] = useState('');
   const navigate = useNavigate();
 
   const checkCreds = async (credentials, password) => {
@@ -35,6 +38,32 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
     }
   };
 
+  const handleVerifyOtp = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, code: otp }),
+      });
+
+      if (response.ok) {
+        alert('Email verified successfully');
+        setOtp('');
+        setOtpError('');
+      } else {
+        const data = await response.json();
+        setOtpError(data.error);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setOtpError('An error occurred while verifying the OTP');
+    }
+  };
+
   return (
     <div>
       <Link to="/"><img src='../src/home.png' style={{ margin: '10px 0px 0px 10px' }} /></Link>
@@ -46,49 +75,68 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
           </div>
           <div className="bee-line"></div>
         </div>
-        <div className="kontakt" id="kontakt">
-          <div className="bee-divider" style={{marginBottom:'25px'}}>
-            <div className="bee-line"></div>
-            <div className="bee-hexagon"></div>
-            <div className="bee-line"></div>
-          </div>
-          <form onSubmit={handleSignIn}>
-            <h2 style={{marginBottom:'25px'}}>Sign in</h2>
-            <label htmlFor="username">Username or email:</label> <br />
-            <input
-              type="text"
-              name="username"
-              id="username"
-              value={credentials}
-              onChange={(e) => setCreds(e.target.value)}
-              required
-            /> <br />
-            {credsError && <p className="error">{credsError}</p>}
-
-            <label htmlFor="password" style={{marginBottom:'10px'}}>Password:</label> <br />
-            <div className="password-container">
-              <input
-                type={passwordVisible ? "text" : "password"}
-                name="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{marginBottom:'50px'}}
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-32px', marginBottom: '50px' }}
-              >
-                <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"} />
-              </button>
+        {!otpSent ? (
+          <div className="kontakt" id="kontakt">
+            <div className="bee-divider" style={{marginBottom:'25px'}}>
+              <div className="bee-line"></div>
+              <div className="bee-hexagon"></div>
+              <div className="bee-line"></div>
             </div>
+            <form onSubmit={handleSignIn}>
+              <h2 style={{marginBottom:'25px'}}>Sign in</h2>
+              <label htmlFor="username">Username or email:</label> <br />
+              <input
+                type="text"
+                name="username"
+                id="username"
+                value={credentials}
+                onChange={(e) => setCreds(e.target.value)}
+                required
+              /> <br />
+              {credsError && <p className="error">{credsError}</p>}
 
-            <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-          </form>
-        </div>
+              <label htmlFor="password" style={{marginBottom:'10px'}}>Password:</label> <br />
+              <div className="password-container">
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  style={{marginBottom:'50px'}}
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  style={{ background: 'white', border: 'none', height: '20px', width: '20px', marginTop: '-32px', marginBottom: '50px' }}
+                >
+                  <img src={passwordVisible ? "../src/show-pass.png" : "../src/hide-pass.png"} />
+                </button>
+              </div>
+
+              <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
+              <button type="submit" style={{marginBottom:'50px'}} onClick={handleVerifyOtp}>Reset password?</button>
+            </form>
+          </div>
+        ) : (
+          <form onSubmit={handleVerifyOtp}>
+              <h2>Verify Email</h2>
+              <label htmlFor="otp">Enter OTP:</label> <br />
+              <input
+                type="text"
+                name="otp"
+                id="otp"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              /> <br />
+              {otpError && <p className="error">{otpError}</p>}
+
+              <button type="submit">Verify</button>
+            </form>
+        )}
         <div className="bee-divider">
           <div className="bee-line"></div>
           <div className="bee-hexagon with-image">
