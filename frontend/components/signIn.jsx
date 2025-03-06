@@ -10,6 +10,9 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpError, setOtpError] = useState('');
+  const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetStep, setResetStep] = useState(1); // 1: Enter email, 2: Enter OTP and new password
   const navigate = useNavigate();
 
   const checkCreds = async (credentials, password) => {
@@ -38,30 +41,56 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
     }
   };
 
-  const handleVerifyOtp = async (event) => {
+  const handleRequestOtp = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('https://backend-production-fbab.up.railway.app/api/verify-email', {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/request-reset-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ credentials, code: otp }),
+        body: JSON.stringify({ email }),
       });
 
       if (response.ok) {
-        alert('Email verified successfully');
-        setOtp('');
-        setOtpError('');
-        setOtpSent(false); // Reset OTP sent state
+        setOtpSent(true);
+        setResetStep(2); // Move to the next step
       } else {
         const data = await response.json();
         setOtpError(data.error);
       }
     } catch (error) {
-      console.error('Error verifying OTP:', error);
-      setOtpError('An error occurred while verifying the OTP');
+      console.error('Error requesting OTP:', error);
+      setOtpError('An error occurred while requesting the OTP');
+    }
+  };
+
+  const handleVerifyOtpAndResetPassword = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/verify-reset-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, code: otp, newPassword }),
+      });
+
+      if (response.ok) {
+        alert('Password reset successfully');
+        setOtp('');
+        setOtpError('');
+        setOtpSent(false); // Reset OTP sent state
+        setResetStep(1); // Reset to the initial step
+      } else {
+        const data = await response.json();
+        setOtpError(data.error);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP and resetting password:', error);
+      setOtpError('An error occurred while verifying the OTP and resetting the password');
     }
   };
 
@@ -118,11 +147,28 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               </div>
 
               <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-              <button type="button" style={{marginLeft:'0px', height:'20px',width:'50px',fontSize:'11px'}} onClick={() => setOtpSent(true)}>Reset password?</button>
+              <button type="button" style={{marginLeft:'-200px', height:'20px',width:'100px',fontSize:'11px'}} onClick={() => setOtpSent(true)}>Reset password?</button>
             </form>
           </div>
         ) : (
-          <form onSubmit={handleVerifyOtp}>
+          resetStep === 1 ? (
+            <form onSubmit={handleRequestOtp}>
+              <h2>Reset Password</h2>
+              <label htmlFor="email">Enter your email:</label> <br />
+              <input
+                type="email"
+                name="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              /> <br />
+              {otpError && <p className="error">{otpError}</p>}
+
+              <button type="submit">Request OTP</button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOtpAndResetPassword}>
               <h2>Verify Email</h2>
               <label htmlFor="otp">Enter OTP:</label> <br />
               <input
@@ -133,10 +179,20 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
                 onChange={(e) => setOtp(e.target.value)}
                 required
               /> <br />
+              <label htmlFor="newPassword">Enter New Password:</label> <br />
+              <input
+                type="password"
+                name="newPassword"
+                id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              /> <br />
               {otpError && <p className="error">{otpError}</p>}
 
-              <button type="submit">Verify</button>
+              <button type="submit">Verify and Reset Password</button>
             </form>
+          )
         )}
         <div className="bee-divider">
           <div className="bee-line"></div>

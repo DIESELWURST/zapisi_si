@@ -299,6 +299,72 @@ app.post('/api/verify-email', (req, res) => {
   });
 });
 
+// Endpoint to request OTP for password reset
+app.post('/api/request-reset-otp', (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const otp = generateOTP();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
+
+  const query = 'UPDATE User SET reset_code = ?, reset_expires = ? WHERE email = ?';
+  connection.query(query, [otp, expiresAt, email], (err, results) => {
+    if (err) {
+      console.error('Error updating reset code:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    const msg = {
+      to: email,
+      from: process.env.SENDGRID_SENDER, // Use the verified email address
+      subject: 'Reset Your Password',
+      text: `Your password reset code is: ${otp}`,
+    };
+
+    sgMail.send(msg)
+      .then(() => {
+        console.log('Password reset email sent');
+        return res.json({ message: 'OTP sent successfully' });
+      })
+      .catch((error) => {
+        console.error('Error sending password reset email:', error);
+        return res.status(500).json({ error: 'Error sending password reset email' });
+      });
+  });
+});
+
+// Endpoint to verify OTP and reset password
+app.post('/api/verify-reset-otp', (req, res) => {
+  const { email, code, newPassword } = req.body;
+  if (!email || !code || !newPassword) {
+    return res.status(400).json({ error: 'Email, verification code, and new password are required' });
+  }
+
+  const query = 'SELECT reset_code, reset_expires FROM User WHERE email = ?';
+  connection.query(query, [email], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    if (results.length === 0 || results[0].reset_code !== code || new Date() > new Date(results[0].reset_expires)) {
+      return res.status(400).json({ error: 'Invalid or expired verification code' });
+    }
+
+    const updateQuery = 'UPDATE User SET password = ?, reset_code = NULL, reset_expires = NULL WHERE email = ?';
+    connection.query(updateQuery, [newPassword, email], (err, updateResults) => {
+      if (err) {
+        console.error('Error updating user password:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err });
+      }
+
+      return res.json({ message: 'Password reset successfully' });
+    });
+  });
+});
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
