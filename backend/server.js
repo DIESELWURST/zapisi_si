@@ -271,13 +271,13 @@ app.post('/api/update-page', (req, res) => {
 
 // Endpoint to verify OTP
 app.post('/api/verify-email', (req, res) => {
-  const { creds, code } = req.body;
-  if (!creds || !code) {
+  const { credentials, code } = req.body;
+  if (!credentials || !code) {
     return res.status(400).json({ error: 'Email and verification code are required' });
   }
 
   const query = 'SELECT verification_code, verification_expires FROM User WHERE (username = ? OR email = ?)';
-  connection.query(query, [creds], (err, results) => {
+  connection.query(query, [credentials, credentials], (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
@@ -288,7 +288,7 @@ app.post('/api/verify-email', (req, res) => {
     }
 
     const updateQuery = 'UPDATE User SET verified = 1, verification_code = NULL, verification_expires = NULL WHERE (username = ? OR email = ?)';
-    connection.query(updateQuery, [creds], (err, updateResults) => {
+    connection.query(updateQuery, [credentials, credentials], (err, updateResults) => {
       if (err) {
         console.error('Error updating user status:', err);
         return res.status(500).json({ error: 'Internal server error', details: err });

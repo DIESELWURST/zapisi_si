@@ -54,6 +54,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
         alert('Email verified successfully');
         setOtp('');
         setOtpError('');
+        setOtpSent(false); // Reset OTP sent state
       } else {
         const data = await response.json();
         setOtpError(data.error);
@@ -117,7 +118,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               </div>
 
               <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-              <button type="submit" style={{marginLeft:'0px', height:'20px',width:'50px',fontSize:'11px'}} onClick={handleVerifyOtp}>Reset password?</button>
+              <button type="button" style={{marginLeft:'0px', height:'20px',width:'50px',fontSize:'11px'}} onClick={() => setOtpSent(true)}>Reset password?</button>
             </form>
           </div>
         ) : (
