@@ -330,7 +330,7 @@ app.post('/api/request-reset-otp', (req, res) => {
       })
       .catch((error) => {
         console.error('Error sending password reset email:', error);
-        return res.status(500).json({ error: 'Error sending password reset email' });
+        return res.status(500).json({ error: 'Error sending password reset email', details: error });
       });
   });
 });
