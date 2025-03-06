@@ -23,35 +23,14 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
     }
   };
 
-  const sendOtp = async (email) => {
-    try {
-      const response = await fetch('https://backend-production-fbab.up.railway.app/api/send-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
-        setOtpSent(true);
-        alert('OTP sent to your email');
-      } else {
-        const data = await response.json();
-        setCredsError(data.error);
-      }
-    } catch (error) {
-      console.error('Error sending OTP:', error);
-      setCredsError('An error occurred while sending the OTP');
-    }
-  };
-
   const handleSignIn = async (event) => {
     event.preventDefault();
 
     const result = await checkCreds(credentials, password);
     if (result.exists) {
-      sendOtp(result.user.email);
+      setIsAuthenticated(true);
+      setUser(result.user); // Assuming the backend returns user information
+      navigate('/app');
     } else if (result.error) {
       setCredsError(result.error);
     } else {
@@ -63,19 +42,18 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('https://backend-production-fbab.up.railway.app/api/verify-otp', {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/verify-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: credentials, otp }),
+        body: JSON.stringify({ email, code: otp }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setIsAuthenticated(true);
-        setUser(data.user); // Assuming the backend returns user information
-        navigate('/app');
+        alert('Email verified successfully');
+        setOtp('');
+        setOtpError('');
       } else {
         const data = await response.json();
         setOtpError(data.error);
@@ -139,7 +117,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               </div>
 
               <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-              <button type="submit" style={{marginLeft:'0px', height:'20px',width:'50px'}} onClick={handleVerifyOtp}>Reset password?</button>
+              <button type="submit" style={{marginLeft:'0px', height:'20px',width:'50px',fontSize:'11px'}} onClick={handleVerifyOtp}>Reset password?</button>
             </form>
           </div>
         ) : (
