@@ -47,7 +47,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, code: otp }),
+        body: JSON.stringify({ credentials, code: otp }),
       });
 
       if (response.ok) {
@@ -117,7 +117,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               </div>
 
               <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-              <button type="submit" style={{marginBottom:'50px'}} onClick={handleVerifyOtp}>Reset password?</button>
+              <button type="submit" style={{marginLeft:'0px', height:'20px',width:'50px'}} onClick={handleVerifyOtp}>Reset password?</button>
             </form>
           </div>
         ) : (

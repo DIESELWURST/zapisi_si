@@ -271,13 +271,13 @@ app.post('/api/update-page', (req, res) => {
 
 // Endpoint to verify OTP
 app.post('/api/verify-email', (req, res) => {
-  const { email, code } = req.body;
-  if (!email || !code) {
+  const { creds, code } = req.body;
+  if (!creds || !code) {
     return res.status(400).json({ error: 'Email and verification code are required' });
   }
 
-  const query = 'SELECT verification_code, verification_expires FROM User WHERE email = ?';
-  connection.query(query, [email], (err, results) => {
+  const query = 'SELECT verification_code, verification_expires FROM User WHERE (username = ? OR email = ?)';
+  connection.query(query, [creds], (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
@@ -287,8 +287,8 @@ app.post('/api/verify-email', (req, res) => {
       return res.status(400).json({ error: 'Invalid or expired verification code' });
     }
 
-    const updateQuery = 'UPDATE User SET verified = 1, verification_code = NULL, verification_expires = NULL WHERE email = ?';
-    connection.query(updateQuery, [email], (err, updateResults) => {
+    const updateQuery = 'UPDATE User SET verified = 1, verification_code = NULL, verification_expires = NULL WHERE (username = ? OR email = ?)';
+    connection.query(updateQuery, [creds], (err, updateResults) => {
       if (err) {
         console.error('Error updating user status:', err);
         return res.status(500).json({ error: 'Internal server error', details: err });
