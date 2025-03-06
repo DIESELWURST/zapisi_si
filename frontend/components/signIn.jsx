@@ -47,7 +47,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, code: otp }),
+        body: JSON.stringify({ credentials, code: otp }),
       });
 
       if (response.ok) {
