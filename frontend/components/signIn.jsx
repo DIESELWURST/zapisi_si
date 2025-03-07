@@ -41,56 +41,85 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
     }
   };
 
-  const handleRequestOtp = async (event) => {
-    event.preventDefault();
+    const generateOtp = async (event) => {
+      event.preventDefault();
 
-    try {
-      const response = await fetch('https://backend-production-fbab.up.railway.app/api/request-reset-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
-        setOtpSent(true);
-        setResetStep(2); // Move to the next step
-      } else {
-        const data = await response.json();
-        setOtpError(data.error);
+      try {
+        const response = await fetch('https://backend-production-fbab.up.railway.app/api/generate-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+        if(response.ok){
+          alert('Message sent to the email successfully');
+          setOtp('');
+          setResetStep(2);
+          setOtpError('');
+        } else {
+          const data = await response.json();
+          setOtpError(data.error);
+        }
+      } catch (error) {
+        console.error('Error verifying OTP:', error);
+        setOtpError('An error occurred while verifying the OTP');
       }
-    } catch (error) {
-      console.error('Error requesting OTP:', error);
-      setOtpError('An error occurred while requesting the OTP');
-    }
-  };
+    };
 
-  const handleVerifyOtpAndResetPassword = async (event) => {
+  const handleResetPassword = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('https://backend-production-fbab.up.railway.app/api/verify-reset-otp', {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, code: otp, newPassword }),
+        body: JSON.stringify({ email, code: otp, password: newPassword }),
       });
 
       if (response.ok) {
         alert('Password reset successfully');
+        setOtpSent(false);
         setOtp('');
+        setNewPassword('');
         setOtpError('');
-        setOtpSent(false); // Reset OTP sent state
-        setResetStep(1); // Reset to the initial step
       } else {
         const data = await response.json();
         setOtpError(data.error);
       }
     } catch (error) {
-      console.error('Error verifying OTP and resetting password:', error);
-      setOtpError('An error occurred while verifying the OTP and resetting the password');
+      console.error('Error resetting password:', error);
+      setOtpError('An error occurred while resetting the password');
+    }
+
+  }
+  
+  const handleVerifyOtp = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('https://backend-production-fbab.up.railway.app/api/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, code: otp }),
+      });
+
+      if (response.ok) {
+        alert('Message sent to the email successfully');
+        setOtp('');
+        setResetStep(2);
+        setOtpError('');
+      } else {
+        const data = await response.json();
+        setOtpError(data.error);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setOtpError('An error occurred while verifying the OTP');
     }
   };
 
@@ -151,10 +180,11 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
             </form>
           </div>
         ) : (
-          resetStep === 1 ? (
-            <form onSubmit={handleRequestOtp}>
-              <h2>Reset Password</h2>
-              <label htmlFor="email">Enter your email:</label> <br />
+          switch(resetStep) {
+            case 1:
+            <form onSubmit={generateOtp}>
+              <h2>Enter the password linked to your account</h2>
+              <label htmlFor="email">Your email:</label> <br />
               <input
                 type="email"
                 name="email"
@@ -167,10 +197,11 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
 
               <button type="submit">Request OTP</button>
             </form>
-          ) : (
-            <form onSubmit={handleVerifyOtpAndResetPassword}>
-              <h2>Verify Email</h2>
-              <label htmlFor="otp">Enter OTP:</label> <br />
+            break;
+            case 2:
+            <form onSubmit={handleVerifyOtp}>
+              <h2>Enter the code that was sent to your email</h2>
+              <label htmlFor="otp"> Confirmation code:</label> <br />
               <input
                 type="text"
                 name="otp"
@@ -179,6 +210,11 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
                 onChange={(e) => setOtp(e.target.value)}
                 required
               /> <br />
+            </form>
+            break;
+            case 3:
+              <form onSubmit={handleResetPassword}>
+              <h2>Reset Password</h2>
               <label htmlFor="newPassword">Enter New Password:</label> <br />
               <input
                 type="password"
@@ -192,8 +228,10 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
 
               <button type="submit">Verify and Reset Password</button>
             </form>
-          )
-        )}
+            break;
+          }
+         )
+        }
         <div className="bee-divider">
           <div className="bee-line"></div>
           <div className="bee-hexagon with-image">
@@ -204,6 +242,6 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
       </div>
     </div>
   );
-};
+}; 
 
 export default SignIn;

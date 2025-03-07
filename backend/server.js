@@ -49,7 +49,7 @@ const sendVerificationCode = async (email) => {
       to: email,
       from: process.env.SENDGRID_SENDER, // Use the verified email address
       subject: 'Verify Your Email',
-      text: `Your verification code is: ${otp}`,
+      text: `Your code is: ${otp}`,
     };
 
     sgMail.send(msg)
@@ -269,15 +269,15 @@ app.post('/api/update-page', (req, res) => {
   });
 });
 
-// Endpoint to verify OTP
+
 app.post('/api/verify-email', (req, res) => {
-  const { credentials, code } = req.body;
-  if (!credentials || !code) {
+  const { email, code } = req.body;
+  if (!email || !code) {
     return res.status(400).json({ error: 'Email and verification code are required' });
   }
 
-  const query = 'SELECT verification_code, verification_expires FROM User WHERE (username = ? OR email = ?)';
-  connection.query(query, [credentials, credentials], (err, results) => {
+  const query = 'SELECT verification_code, verification_expires FROM User WHERE  email = ?';
+  connection.query(query, [email], (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
@@ -287,14 +287,44 @@ app.post('/api/verify-email', (req, res) => {
       return res.status(400).json({ error: 'Invalid or expired verification code' });
     }
 
-    const updateQuery = 'UPDATE User SET verified = 1, verification_code = NULL, verification_expires = NULL WHERE (username = ? OR email = ?)';
-    connection.query(updateQuery, [credentials, credentials], (err, updateResults) => {
+    const updateQuery = 'UPDATE User SET verified = 1, verification_code = NULL, verification_expires = NULL WHERE email = ?';
+    connection.query(updateQuery, [email], (err, updateResults) => {
       if (err) {
         console.error('Error updating user status:', err);
         return res.status(500).json({ error: 'Internal server error', details: err });
       }
 
       return res.json({ message: 'Email verified successfully' });
+    });
+  });
+});
+
+// Endpoint za spreminjanje gesla
+app.post('/api/change-password', (req, res) => {
+  const { email, oldPassword, newPassword } = req.body;
+  if (!email || !oldPassword || !newPassword) {
+    return res.status(400).json({ error: 'Email, old password, and new password are required' });
+  }
+
+  const query = 'SELECT * FROM User WHERE email = ? AND password = ?';
+  connection.query(query, [email, oldPassword], (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    if (results.length === 0) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    const updateQuery = 'UPDATE User SET password = ? WHERE email = ?';
+    connection.query(updateQuery, [newPassword, email], (err, updateResults) => {
+      if (err) {
+        console.error('Error updating user password:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err });
+      }
+
+      return res.json({ message: 'Password changed successfully' });
     });
   });
 });
@@ -330,15 +360,15 @@ app.post('/api/request-reset-otp', (req, res) => {
       })
       .catch((error) => {
         console.error('Error sending password reset email:', error);
-        return res.status(500).json({ error: 'Error sending password reset email', details: error });
+        return res.status(500).json({ error: 'Error sending password reset email' });
       });
   });
 });
 
 // Endpoint to verify OTP and reset password
-app.post('/api/verify-reset-otp', (req, res) => {
-  const { email, code, newPassword } = req.body;
-  if (!email || !code || !newPassword) {
+app.post('/api/reset-password', (req, res) => {
+  const { email, code, password } = req.body;
+  if (!email || !code || !password) {
     return res.status(400).json({ error: 'Email, verification code, and new password are required' });
   }
 
@@ -354,7 +384,7 @@ app.post('/api/verify-reset-otp', (req, res) => {
     }
 
     const updateQuery = 'UPDATE User SET password = ?, reset_code = NULL, reset_expires = NULL WHERE email = ?';
-    connection.query(updateQuery, [newPassword, email], (err, updateResults) => {
+    connection.query(updateQuery, [password, email], (err, updateResults) => {
       if (err) {
         console.error('Error updating user password:', err);
         return res.status(500).json({ error: 'Internal server error', details: err });
