@@ -339,7 +339,7 @@ app.post('/api/request-reset-otp', (req, res) => {
   const otp = generateOTP();
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
 
-  const query = 'UPDATE User SET reset_code = ?, reset_expires = ? WHERE email = ?';
+  const query = 'UPDATE User SET verification_code = ?, verification_expires = ? WHERE email = ?';
   connection.query(query, [otp, expiresAt, email], (err, results) => {
     if (err) {
       console.error('Error updating reset code:', err);
@@ -372,18 +372,18 @@ app.post('/api/reset-password', (req, res) => {
     return res.status(400).json({ error: 'Email, verification code, and new password are required' });
   }
 
-  const query = 'SELECT reset_code, reset_expires FROM User WHERE email = ?';
+  const query = 'SELECT verification_code, verification_expires FROM User WHERE email = ?';
   connection.query(query, [email], (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
     }
 
-    if (results.length === 0 || results[0].reset_code !== code || new Date() > new Date(results[0].reset_expires)) {
+    if (results.length === 0 || results[0].verification_code !== code || new Date() > new Date(results[0].verification_expires)) {
       return res.status(400).json({ error: 'Invalid or expired verification code' });
     }
 
-    const updateQuery = 'UPDATE User SET password = ?, reset_code = NULL, reset_expires = NULL WHERE email = ?';
+    const updateQuery = 'UPDATE User SET password = ?, verification_code = NULL, verification_expires = NULL WHERE email = ?';
     connection.query(updateQuery, [password, email], (err, updateResults) => {
       if (err) {
         console.error('Error updating user password:', err);

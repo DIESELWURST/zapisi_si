@@ -153,8 +153,8 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
         ) : (
           resetStep === 1 ? (
             <form onSubmit={handleRequestOtp}>
-              <h2>Reset Password</h2>
-              <label htmlFor="email">Enter your email:</label> <br />
+              <h2>Enter your mail:</h2>
+              <label htmlFor="email">email:</label> <br />
               <input
                 type="email"
                 name="email"
