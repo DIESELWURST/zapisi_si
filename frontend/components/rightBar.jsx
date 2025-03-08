@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './styles.css'; 
 
-const RightBar = ({onDeletePage}) => {
+const RightBar = ({ onDeletePage }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [isIndented, setIsIndented] = useState(false);
 
@@ -19,7 +19,7 @@ const RightBar = ({onDeletePage}) => {
   };
 
   return (
-    <div style= {{   fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif'}}>
+    <div style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif' }}>
       <button 
         className={`rightbar-button ${sidebarVisible ? 'open' : ''}`} 
         onClick={toggleSidebar} 
@@ -47,7 +47,10 @@ const RightBar = ({onDeletePage}) => {
               <span className="slider round"></span>
             </label>
           </div>
-          <button className="delete-page-button" onClick={onDeletePage}>Delete Page</button>
+          <button className="delete-page-button" onClick={onDeletePage}>
+            Delete Page
+            <img src="../src/delete-bttn.png" alt="Delete Icon" />
+          </button>
         </div>
       </div>
     </div>

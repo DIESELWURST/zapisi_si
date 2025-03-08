@@ -503,3 +503,37 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+
+.delete-page-button {
+  margin-top: 50px;
+  width: 50%;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  background-color: #ff4d4d; /* Red background color */
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.delete-page-button img {
+  margin-left: 8px;
+  width: 20px;
+  height: 20px;
+}
+
+.delete-page-button:hover {
+  background-color: #ff1a1a; /* Darker red on hover */
+  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3); /* Add a box shadow on hover */
+}
+
+.delete-page-button:active {
+  background-color: #e60000; /* Even darker red on click */
+  box-shadow: 0 2px 4px rgba(255, 0, 0, 0.2); /* Reduce the box shadow on click */
+}
