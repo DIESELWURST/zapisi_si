@@ -255,12 +255,18 @@ app.post('/api/delete-page', (req, res) => {
   if (!pageId) {
     return res.status(400).json({ error: 'Page ID is required' });
   }
-
+  const queryOwner = 'DELETE FROM Owner WHERE page_id = ?';
+  connection.query(queryOwner, [pageId], (err, results) => {
+    if (err) {
+      console.error('Error deleting page:', err);
+      return res.status(500).json({ error: 'Internal server error - Owner constraint issue', details: err });
+    }
+  });
   const query = 'DELETE FROM Page WHERE page_id = ?';
   connection.query(query, [pageId], (err, results) => {
     if (err) {
       console.error('Error deleting page:', err);
-      return res.status(500).json({ error: 'Internal server error', details: err });
+      return res.status(500).json({ error: 'Internal server error - Page deletion issue', details: err });
     }
 
     return res.json({ message: 'Page deleted successfully' });
