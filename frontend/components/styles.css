@@ -511,7 +511,7 @@ input:checked + .slider:before {
   font-weight: bold;
   font-size: 1.5rem;
   border-radius: 90%;
-  color: white;
+  background-color: white;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
