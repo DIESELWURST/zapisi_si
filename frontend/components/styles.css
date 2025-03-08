@@ -509,7 +509,6 @@ input:checked + .slider:before {
   margin-top: 50px;
   width: 75%;
   font-weight: bold;
-  font-size: 1.5rem;
   border-radius: 90%;
   background-color: white;
   border: none;
