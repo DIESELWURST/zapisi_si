@@ -250,7 +250,7 @@ app.post('/api/add-page', (req, res) => {
   });
 });
 
-app.post ('/api/delete-page', (req, res) => {
+app.post('/api/delete-page', (req, res) => {
   const pageId = req.query.pageId;
   if (!pageId) {
     return res.status(400).json({ error: 'Page ID is required' });

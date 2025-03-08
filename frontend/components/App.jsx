@@ -110,6 +110,7 @@ const App = () => {
       console.error('Error adding new page:', error);
     }
   };
+
   const deletePage = async () => {
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/delete-page?pageId=${currentPageId}`, {
@@ -128,7 +129,7 @@ const App = () => {
     } catch (error) {
       console.error('Error deleting page:', error);
     }
-  }
+  };
 
   const selectPage = (id) => {
     setCurrentPageId(id);

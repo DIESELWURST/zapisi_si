@@ -191,7 +191,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               /> <br />
               {otpError && <p className="error">{otpError}</p>}
 
-              <button type="submit" style={{marginBottom:'35px'}}>Reset Password</button>
+              <button type="submit" style={{marginBottom:'35px',marginTop:'-10px'}}>Reset Password</button>
             </form>
           )
         )}
