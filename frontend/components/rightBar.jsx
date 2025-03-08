@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './styles.css'; 
 
-const RightBar = () => {
+const RightBar = ({onDeletePage}) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [isIndented, setIsIndented] = useState(false);
 
@@ -47,6 +47,7 @@ const RightBar = () => {
               <span className="slider round"></span>
             </label>
           </div>
+          <button className="delete-page-button" onClick={onDeletePage}>Delete Page</button>
         </div>
       </div>
     </div>

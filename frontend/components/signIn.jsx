@@ -113,7 +113,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
             </div>
         {!otpSent ? (
             <form onSubmit={handleSignIn}>
-              <h2 style={{marginBottom:'25px'}}>Sign in</h2>
+              <h2 style={{marginBottom:'25px'}}>Sign In</h2>
               <label htmlFor="username">Username or email:</label> <br />
               <input
                 type="text"
@@ -147,7 +147,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               </div>
 
               <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-              <button type="button" style={{marginLeft:'-250px', height:'30px',width:'150px',fontSize:'12px', fontWeight:'bold'}} onClick={() => setOtpSent(true)}>Reset password?</button>
+              <button type="button" style={{marginLeft:'-250px', height:'30px',width:'150px',fontSize:'12px', fontWeight:'bold'}} onClick={() => setOtpSent(true)}>Reset Password?</button>
             </form>
         ) : (
           resetStep === 1 ? (

@@ -110,6 +110,25 @@ const App = () => {
       console.error('Error adding new page:', error);
     }
   };
+  const deletePage = async () => {
+    try {
+      const response = await fetch(`https://backend-production-fbab.up.railway.app/api/delete-page?pageId=${currentPageId}`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const updatedPages = pages.filter((page) => page.page_id !== currentPageId);
+        setPages(updatedPages);
+        setCurrentPageId(updatedPages.length > 0 ? updatedPages[0].page_id : null);
+        localStorage.setItem('currentPageId', updatedPages.length > 0 ? updatedPages[0].page_id : null);
+      } else {
+        const errorData = await response.json();
+        console.error('Error deleting page:', errorData);
+      }
+    } catch (error) {
+      console.error('Error deleting page:', error);
+    }
+  }
 
   const selectPage = (id) => {
     setCurrentPageId(id);
@@ -214,7 +233,7 @@ const App = () => {
             isAuthenticated ? (
               <div className="app-container">
                 <SideBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
-                <RightBar />
+                <RightBar onDeletePage={deletePage}/>
                 <div className="flex-1">
                   {currentPage ? (
                     <CurrentPage

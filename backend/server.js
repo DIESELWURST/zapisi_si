@@ -250,6 +250,23 @@ app.post('/api/add-page', (req, res) => {
   });
 });
 
+app.post ('/api/delete-page', (req, res) => {
+  const pageId = req.query.pageId;
+  if (!pageId) {
+    return res.status(400).json({ error: 'Page ID is required' });
+  }
+
+  const query = 'DELETE FROM Page WHERE page_id = ?';
+  connection.query(query, [pageId], (err, results) => {
+    if (err) {
+      console.error('Error deleting page:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    return res.json({ message: 'Page deleted successfully' });
+  });
+});
+
 // Endpoint to update a page
 app.post('/api/update-page', (req, res) => {
   const { page_id, title, content, user_id } = req.body;
