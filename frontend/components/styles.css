@@ -507,11 +507,10 @@ input:checked + .slider:before {
 
 .delete-page-button {
   margin-top: 50px;
-  width: 50%;
+  width: 75%;
   font-weight: bold;
   font-size: 1.5rem;
-  border-radius: 50%;
-  background-color: #ff4d4d; /* Red background color */
+  border-radius: 90%;
   color: white;
   border: none;
   cursor: pointer;
@@ -528,12 +527,3 @@ input:checked + .slider:before {
   height: 20px;
 }
 
-.delete-page-button:hover {
-  background-color: #ff1a1a; /* Darker red on hover */
-  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3); /* Add a box shadow on hover */
-}
-
-.delete-page-button:active {
-  background-color: #e60000; /* Even darker red on click */
-  box-shadow: 0 2px 4px rgba(255, 0, 0, 0.2); /* Reduce the box shadow on click */
-}
