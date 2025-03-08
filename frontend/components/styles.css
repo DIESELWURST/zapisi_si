@@ -506,7 +506,7 @@ input:checked + .slider:before {
 
 
 .delete-page-button {
-  margin-top: 50px;
+  margin-top: 25px;
   font-weight: bold;
   border-radius: 5px;
   background-color: white;
