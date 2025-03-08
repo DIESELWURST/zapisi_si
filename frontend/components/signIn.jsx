@@ -179,7 +179,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
                 required
                 style= {{marginBottom:'50px'}}
               /> <br />
-              <label htmlFor="newPassword">Enter New Password:</label> <br />
+              <label htmlFor="newPassword" style={{marginBottom:'15px'}}>Enter New Password:</label> <br />
               <input
                 type="text"
                 name="newPassword"
