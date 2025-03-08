@@ -105,13 +105,13 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
           </div>
           <div className="bee-line"></div>
         </div>
-        {!otpSent ? (
-          <div className="kontakt" id="kontakt">
+        <div className="kontakt" id="kontakt">
             <div className="bee-divider" style={{marginBottom:'25px'}}>
               <div className="bee-line"></div>
               <div className="bee-hexagon"></div>
               <div className="bee-line"></div>
             </div>
+        {!otpSent ? (
             <form onSubmit={handleSignIn}>
               <h2 style={{marginBottom:'25px'}}>Sign in</h2>
               <label htmlFor="username">Username or email:</label> <br />
@@ -149,7 +149,6 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
               <button type="button" style={{marginLeft:'-200px', height:'20px',width:'100px',fontSize:'11px'}} onClick={() => setOtpSent(true)}>Reset password?</button>
             </form>
-          </div>
         ) : (
           resetStep === 1 ? (
             <form onSubmit={handleRequestOtp}>
@@ -169,7 +168,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
             </form>
           ) : (
             <form onSubmit={handleVerifyOtpAndResetPassword}>
-              <h2>Verify Email</h2>
+              <h2>Reset password</h2>
               <label htmlFor="otp">Enter OTP:</label> <br />
               <input
                 type="text"
@@ -181,7 +180,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               /> <br />
               <label htmlFor="newPassword">Enter New Password:</label> <br />
               <input
-                type="password"
+                type="text"
                 name="newPassword"
                 id="newPassword"
                 value={newPassword}
@@ -194,6 +193,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
             </form>
           )
         )}
+        </div>
         <div className="bee-divider">
           <div className="bee-line"></div>
           <div className="bee-hexagon with-image">
