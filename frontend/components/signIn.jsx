@@ -147,7 +147,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
               </div>
 
               <button type="submit" style={{marginBottom:'50px'}}>Sign In</button>
-              <button type="button" style={{marginLeft:'-250px', height:'30px',width:'150px',fontSize:'12px'}} onClick={() => setOtpSent(true)}>Reset password?</button>
+              <button type="button" style={{marginLeft:'-250px', height:'30px',width:'150px',fontSize:'13px', fontWeight:'bold'}} onClick={() => setOtpSent(true)}>Reset password?</button>
             </form>
         ) : (
           resetStep === 1 ? (
