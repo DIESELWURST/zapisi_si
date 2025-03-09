@@ -41,7 +41,7 @@ const LandingPage = () => (
       <div className='footer-links'>
         <Link to="/privacy">Privacy Policy</Link>
         <Link to="/terms">Terms of Service</Link>
-        <Link to="/contact">Contact Us</Link>
+        <Link to="/contact-us">Contact Us</Link>
       </div>
     </footer>
   </div>
