@@ -48,18 +48,15 @@ const Contact = () => {
           <div className="bee-line"></div>
         </div>
         <form action="https://formspree.io/f/manyznzd" method="POST" onSubmit={handleSubmit}>
-          <h2>KONTAKT</h2>
-          <label htmlFor="ime">Ime:</label> <br/>
+          <h2>CONTACT</h2>
+          <label htmlFor="ime">Name:</label> <br/>
           <input
             type="text"
             name="ime"
             id="ime"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
             required
           /> <br/>
-          {nameError && <p className="error">{nameError}</p>}
-          <label htmlFor="el-naslov">Elektronski naslov:</label> <br/>
+          <label htmlFor="el-naslov">Email:</label> <br/>
           <input
             type="email"
             name="el-naslov"
@@ -69,14 +66,14 @@ const Contact = () => {
             required
           /> <br/>
           {emailError && <p className="error">{emailError}</p>}
-          <label htmlFor="sporocilo">Sporočilo:</label> <br/>
+          <label htmlFor="sporocilo">Message:</label> <br/>
           <textarea
             name="sporocilo"
             id="sporocilo"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           ></textarea> <br/>
-          <button type="submit">Pošlji!</button>
+          <button type="submit">Send!</button>
         </form>
       </div>
       <div className="bee-divider">
