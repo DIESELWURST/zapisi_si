@@ -6,7 +6,7 @@ import CurrentPage from "./currentPage";
 import LandingPage from "./landingPage";
 import SignUp from "./signUp";
 import SignIn from "./signIn";
-import Contact from "./contact";
+import Contact from "./Contact";
 import "./styles.css";
 
 const App = () => {
