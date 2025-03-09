@@ -29,7 +29,10 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   const handleSignIn = async (event) => {
     event.preventDefault();
 
-    const result = await checkCreds(credentials, password);
+    // Hash the password before sending it to the backend
+    const hashedPassword = await hashPassword(password);
+
+    const result = await checkCreds(credentials, hashedPassword);
     if (result.exists) {
       setIsAuthenticated(true);
       setUser(result.user); // Assuming the backend returns user information
@@ -40,6 +43,14 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
       setCredsError('It appears that either your login or password is incorrect. Please try again.');
     }
   };
+
+  async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+  }
 
   const handleRequestOtp = async (event) => {
     event.preventDefault();
@@ -69,13 +80,16 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   const handleVerifyOtpAndResetPassword = async (event) => {
     event.preventDefault();
 
+    // Hash the new password before sending it to the backend
+    const hashedNewPassword = await hashPassword(newPassword);
+
     try {
       const response = await fetch('https://backend-production-fbab.up.railway.app/api/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, code: otp, password: newPassword }),
+        body: JSON.stringify({ email, code: otp, password: hashedNewPassword }),
       });
 
       if (response.ok) {

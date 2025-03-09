@@ -59,6 +59,14 @@ const SignUp = () => {
     }
   };
 
+  async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
   const handleSignUp = async (event) => {
     event.preventDefault();
 
@@ -98,6 +106,9 @@ const SignUp = () => {
       return;
     }
 
+    // Hash the password before sending it to the backend
+    const hashedPassword = await hashPassword(password);
+
     // Add new user to the database
     try {
       const response = await fetch('https://backend-production-fbab.up.railway.app/api/add-user', {
@@ -105,7 +116,7 @@ const SignUp = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password: hashedPassword }),
       });
 
       if (response.ok) {

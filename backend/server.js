@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import sgMail from '@sendgrid/mail';
+import argon2 from 'argon2';
 
 dotenv.config();
 
@@ -109,91 +110,110 @@ app.get('/api/mail-exists', (req, res) => {
 });
 
 // Endpoint to add a new user and create a default page
-app.post('/api/add-user', (req, res) => {
+app.post('/api/add-user', async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'Username, email, and password are required' });
   }
 
-  const query = 'INSERT INTO User (username, email, password) VALUES (?, ?, ?)';
+  try {
+    // Hash the password using argon2
+    const hashedPassword = await argon2.hash(password);
 
-  connection.query(query, [username, email, password], (err, results) => {
-    if (err) {
-      console.error('Error adding user to the database:', err);
-      return res.status(500).json({ error: 'Internal server error', details: err });
-    }
+    const query = 'INSERT INTO User (username, email, password) VALUES (?, ?, ?)';
 
-    const userId = results.insertId;
-
-    const defaultPage = {
-      userId: userId,
-      title: 'Welcome to ZapišiSi!',
-      content: JSON.stringify([
-        { id: 1, type: "textBlock", content: "Getting Started!" },
-        {
-          id: 2,
-          type: "checklist",
-          items: [
-            { id: 1, content: "Click and type anywhere", checked: false },
-            { id: 2, content: "Drag items to reorder them", checked: false },
-          ],
-        },
-        {
-          id: 3,
-          type: "toggleBlock",
-          title: "This is a toggle block.",
-          content: "• Here's some info about toggles.",
-        },
-      ]),
-    };
-
-    const pageQuery = 'INSERT INTO Page (title, content) VALUES (?, ?)';
-    connection.query(pageQuery, [defaultPage.title, defaultPage.content], (err, pageResults) => {
+    connection.query(query, [username, email, hashedPassword], (err, results) => {
       if (err) {
-        console.error('Error creating default page:', err);
+        console.error('Error adding user to the database:', err);
         return res.status(500).json({ error: 'Internal server error', details: err });
       }
 
-      const pageId = pageResults.insertId;
-      const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
-      connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
+      const userId = results.insertId;
+
+      const defaultPage = {
+        userId: userId,
+        title: 'Welcome to ZapišiSi!',
+        content: JSON.stringify([
+          { id: 1, type: "textBlock", content: "Getting Started!" },
+          {
+            id: 2,
+            type: "checklist",
+            items: [
+              { id: 1, content: "Click and type anywhere", checked: false },
+              { id: 2, content: "Drag items to reorder them", checked: false },
+            ],
+          },
+          {
+            id: 3,
+            type: "toggleBlock",
+            title: "This is a toggle block.",
+            content: "• Here's some info about toggles.",
+          },
+        ]),
+      };
+
+      const pageQuery = 'INSERT INTO Page (title, content) VALUES (?, ?)';
+      connection.query(pageQuery, [defaultPage.title, defaultPage.content], (err, pageResults) => {
         if (err) {
-          console.error('Error linking user to page:', err);
+          console.error('Error creating default page:', err);
           return res.status(500).json({ error: 'Internal server error', details: err });
         }
 
-        sendVerificationCode(email);
+        const pageId = pageResults.insertId;
+        const ownerQuery = 'INSERT INTO Owner (user_id, page_id) VALUES (?, ?)';
+        connection.query(ownerQuery, [userId, pageId], (err, ownerResults) => {
+          if (err) {
+            console.error('Error linking user to page:', err);
+            return res.status(500).json({ error: 'Internal server error', details: err });
+          }
 
-        return res.json({ message: 'User and default page added successfully. Please verify your email.' });
+          sendVerificationCode(email);
+
+          return res.json({ message: 'User and default page added successfully. Please verify your email.' });
+        });
       });
     });
-  });
+  } catch (error) {
+    console.error('Error hashing password:', error);
+    return res.status(500).json({ error: 'Internal server error', details: error });
+  }
 });
 
 // Endpoint to check user credentials
-app.get('/api/check-credentials', (req, res) => {
+app.get('/api/check-credentials', async (req, res) => {
   const credentials = req.query.credentials;
   const password = req.query.password;
   if (!credentials || !password) {
     return res.status(400).json({ error: 'Credentials and password are required' });
   }
 
-  const query = 'SELECT * FROM User WHERE (username = ? OR email = ?) AND password = ?';
+  const query = 'SELECT * FROM User WHERE username = ? OR email = ?';
 
-  connection.query(query, [credentials, credentials, password], (err, results) => {
+  connection.query(query, [credentials, credentials], async (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
     }
 
-    if (results.length > 0) {
-      const user = results[0];
+    if (results.length === 0) {
+      return res.status(400).json({ error: 'Invalid credentials' });
+    }
+
+    const user = results[0];
+    try {
+      const validPassword = await argon2.verify(user.password, password);
+      if (!validPassword) {
+        return res.status(400).json({ error: 'Invalid credentials' });
+      }
+
       if (!user.verified) {
         return res.status(403).json({ error: 'Email not verified. Please verify your email before signing in.' });
       }
+
       return res.json({ exists: true, user, message: '1' });
-    } else {
-      return res.json({ exists: false, message: '0' });
+    } catch (error) {
+      console.error('Error verifying password:', error);
+      return res.status(500).json({ error: 'Internal server error', details: error });
     }
   });
 });
@@ -322,35 +342,6 @@ app.post('/api/verify-email', (req, res) => {
   });
 });
 
-// Endpoint za spreminjanje gesla
-app.post('/api/change-password', (req, res) => {
-  const { email, oldPassword, newPassword } = req.body;
-  if (!email || !oldPassword || !newPassword) {
-    return res.status(400).json({ error: 'Email, old password, and new password are required' });
-  }
-
-  const query = 'SELECT * FROM User WHERE email = ? AND password = ?';
-  connection.query(query, [email, oldPassword], (err, results) => {
-    if (err) {
-      console.error('Error querying the database:', err);
-      return res.status(500).json({ error: 'Internal server error', details: err });
-    }
-
-    if (results.length === 0) {
-      return res.status(400).json({ error: 'Invalid email or password' });
-    }
-
-    const updateQuery = 'UPDATE User SET password = ? WHERE email = ?';
-    connection.query(updateQuery, [newPassword, email], (err, updateResults) => {
-      if (err) {
-        console.error('Error updating user password:', err);
-        return res.status(500).json({ error: 'Internal server error', details: err });
-      }
-
-      return res.json({ message: 'Password changed successfully' });
-    });
-  });
-});
 
 // Endpoint to request OTP for password reset
 app.post('/api/request-reset-otp', (req, res) => {
@@ -389,14 +380,14 @@ app.post('/api/request-reset-otp', (req, res) => {
 });
 
 // Endpoint to verify OTP and reset password
-app.post('/api/reset-password', (req, res) => {
+app.post('/api/reset-password', async (req, res) => {
   const { email, code, password } = req.body;
   if (!email || !code || !password) {
     return res.status(400).json({ error: 'Email, verification code, and new password are required' });
   }
 
   const query = 'SELECT verification_code, verification_expires FROM User WHERE email = ?';
-  connection.query(query, [email], (err, results) => {
+  connection.query(query, [email], async (err, results) => {
     if (err) {
       console.error('Error querying the database:', err);
       return res.status(500).json({ error: 'Internal server error', details: err });
@@ -406,15 +397,23 @@ app.post('/api/reset-password', (req, res) => {
       return res.status(400).json({ error: 'Invalid or expired verification code' });
     }
 
-    const updateQuery = 'UPDATE User SET password = ?, verification_code = NULL, verification_expires = NULL WHERE email = ?';
-    connection.query(updateQuery, [password, email], (err, updateResults) => {
-      if (err) {
-        console.error('Error updating user password:', err);
-        return res.status(500).json({ error: 'Internal server error', details: err });
-      }
+    try {
+      // Hash the new password using argon2
+      const hashedPassword = await argon2.hash(password);
 
-      return res.json({ message: 'Password reset successfully' });
-    });
+      const updateQuery = 'UPDATE User SET password = ?, verification_code = NULL, verification_expires = NULL WHERE email = ?';
+      connection.query(updateQuery, [hashedPassword, email], (err, updateResults) => {
+        if (err) {
+          console.error('Error updating user password:', err);
+          return res.status(500).json({ error: 'Internal server error', details: err });
+        }
+
+        return res.json({ message: 'Password reset successfully' });
+      });
+    } catch (error) {
+      console.error('Error hashing password:', error);
+      return res.status(500).json({ error: 'Internal server error', details: error });
+    }
   });
 });
 
