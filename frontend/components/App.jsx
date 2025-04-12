@@ -154,7 +154,7 @@ const App = () => {
 
       if (component.type === "textBlock") {
         doc.text(component.content, 10, yOffset);
-        yOffset += 10;
+        yOffset += 20;
       } else if (component.type === "checklist") {
         component.items.forEach((item) => {
           // narišemo checkbox
@@ -170,12 +170,12 @@ const App = () => {
 
           // Add the text next to the checkbox
           doc.text(item.content, 30, yOffset);
-          yOffset += 10;
+          yOffset += 20;
         });
       } else if (component.type === "toggleBlock") {
-        doc.text(`   ${component.title}`, 10, yOffset);
-        yOffset += 10;
-        doc.text(`${component.content}`, 10, yOffset);
+        doc.text(`${component.title}`, 10, yOffset);
+        yOffset += 20;
+        doc.text(`${component.content}`, 20, yOffset);
         yOffset += 10;
       }
     });
