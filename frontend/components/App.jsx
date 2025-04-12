@@ -148,7 +148,7 @@ const App = () => {
     doc.text(currentPage.title || "Untitled Page", 10, 10);
 
     // Add the page content
-    let yOffset = 20; // Vertical offset for content
+    let yOffset = 10; // Vertical offset for content
     currentPage.content.forEach((component) => {
       doc.setFontSize(14);
 
@@ -174,7 +174,7 @@ const App = () => {
         });
       } else if (component.type === "toggleBlock") {
         doc.text(`${component.title}`, 10, yOffset);
-        yOffset += 20;
+        yOffset += 15;
         doc.text(`${component.content}`, 20, yOffset);
         yOffset += 10;
       }
