@@ -158,18 +158,18 @@ const App = () => {
       } else if (component.type === "checklist") {
         component.items.forEach((item) => {
           // narišemo checkbox
-          doc.rect(10, yOffset - 4, 5, 5); // x, y, w, h
+          doc.rect(20, yOffset - 4, 5, 5); // x, y, w, h
 
           // Če je bil checked, narišemo kljukico
           if (item.checked) {
             // navpična črta
-            doc.line(11, yOffset - 2, 11, yOffset ); // x1, y1, x2, y2
+            doc.line(21, yOffset - 2, 21, yOffset ); // x1, y1, x2, y2
             // poševna črta
-            doc.line(11, yOffset , 14, yOffset -4); // x1, y1, x2, y2
+            doc.line(21, yOffset , 25, yOffset -4); // x1, y1, x2, y2
           }
 
           // Add the text next to the checkbox
-          doc.text(item.content, 20, yOffset);
+          doc.text(item.content, 30, yOffset);
           yOffset += 10;
         });
       } else if (component.type === "toggleBlock") {
