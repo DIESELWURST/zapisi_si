@@ -150,17 +150,26 @@ const App = () => {
     // Add the page content
     let yOffset = 20; // Vertical offset for content
     currentPage.content.forEach((component) => {
-      doc.setFontSize(18);
-      yOffset += 10;
+      doc.setFontSize(14);
 
       if (component.type === "textBlock") {
-        doc.setFontSize(12);
         doc.text(component.content, 10, yOffset);
         yOffset += 10;
       } else if (component.type === "checklist") {
         component.items.forEach((item) => {
-          const checkbox = item.checked ? "☑" : "☐";
-          doc.text(`${checkbox} ${item.content}`, 10, yOffset);
+          // narišemo checkbox
+          doc.rect(10, yOffset - 4, 5, 5); // x, y, w, h
+
+          // Če je bil checked, narišemo kljukico
+          if (item.checked) {
+            // navpična črta
+            doc.line(11, yOffset - 2, 11, yOffset + 2); // x1, y1, x2, y2
+            // vodoravna črta
+            doc.line(11, yOffset + 2, 14, yOffset + 2); // x1, y1, x2, y2
+          }
+
+          // Add the text next to the checkbox
+          doc.text(item.content, 20, yOffset);
           yOffset += 10;
         });
       } else if (component.type === "toggleBlock") {
@@ -171,6 +180,7 @@ const App = () => {
       }
     });
 
+    // Shranimo PDF
     doc.save(`${currentPage.title || "Untitled_Page"}.pdf`);
   };
 
