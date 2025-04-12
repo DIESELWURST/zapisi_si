@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './styles.css'; 
 
-const RightBar = ({ onDeletePage }) => {
+const RightBar = ({ onDeletePage,onExportPage }) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [isIndented, setIsIndented] = useState(false);
 
@@ -51,6 +51,9 @@ const RightBar = ({ onDeletePage }) => {
             Delete Page
             <img src="../src/delete-bttn.png" alt="Delete Icon" />
           </button>
+          <button className="export-button" onClick={onExportPage}>
+            Export
+          </button> 
         </div>
       </div>
     </div>

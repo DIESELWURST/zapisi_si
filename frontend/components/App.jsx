@@ -8,6 +8,7 @@ import SignUp from "./signUp";
 import SignIn from "./signIn";
 import Contact from "./Contact";
 import "./styles.css";
+import jsPDF from "jspdf";
 
 const App = () => {
   const [pages, setPages] = useState([]);
@@ -132,6 +133,48 @@ const App = () => {
     }
   };
 
+  const exportPage = async () => {
+    const currentPage = pages.find((page) => page.page_id === currentPageId);
+    if (!currentPage) {
+      console.error("No page selected for export.");
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    // Add the page title
+    doc.setFontSize(18);
+    doc.text(currentPage.title || "Untitled Page", 10, 10);
+
+    // Add the page content
+    let yOffset = 20; // Vertical offset for content
+    currentPage.content.forEach((component) => {
+      doc.setFontSize(14);
+      doc.text(`Component: ${component.type}`, 10, yOffset);
+      yOffset += 10;
+
+      if (component.type === "textBlock") {
+        doc.setFontSize(12);
+        doc.text(component.content, 10, yOffset);
+        yOffset += 10;
+      } else if (component.type === "checklist") {
+        component.items.forEach((item) => {
+          const checkbox = item.checked ? "[✔]" : "[ ]";
+          doc.text(`${checkbox} ${item.content}`, 10, yOffset);
+          yOffset += 10;
+        });
+      } else if (component.type === "toggleBlock") {
+        doc.text(`Title: ${component.title}`, 10, yOffset);
+        yOffset += 10;
+        doc.text(`Content: ${component.content}`, 10, yOffset);
+        yOffset += 10;
+      }
+    });
+
+    // Save the PDF
+    doc.save(`${currentPage.title || "Untitled_Page"}.pdf`);
+  };
+
   const selectPage = (id) => {
     setCurrentPageId(id);
     localStorage.setItem('currentPageId', id);
@@ -211,16 +254,6 @@ const App = () => {
     localStorage.setItem('user', JSON.stringify(user));
   };
 
-  const handleSignOut = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-    setCurrentPageId(null);
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
-    localStorage.removeItem('currentPageId');
-    localStorage.removeItem('userId'); // Remove user ID from local storage
-  };
-
   const currentPage = pages.find((page) => page.page_id === currentPageId);
 
   return (
@@ -235,7 +268,7 @@ const App = () => {
             isAuthenticated ? (
               <div className="app-container">
                 <SideBar pages={pages} onNewPage={addNewPage} onSelectPage={selectPage} />
-                <RightBar onDeletePage={deletePage}/>
+                <RightBar onDeletePage={deletePage} onExportPage={exportPage}/>
                 <div className="flex-1">
                   {currentPage ? (
                     <CurrentPage
