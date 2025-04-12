@@ -144,11 +144,11 @@ const App = () => {
 
     // Naslov strani
     doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif");
-    doc.setFontSize(18);
+    doc.setFontSize(20);
     doc.text(currentPage.title || "Untitled Page", 10, 10);
 
     // Add the page content
-    let yOffset = 20; // Vertical offset for content
+    let yOffset = 200; // Vertical offset for content
     currentPage.content.forEach((component) => {
       doc.setFontSize(14);
 
