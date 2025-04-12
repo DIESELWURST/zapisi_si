@@ -165,7 +165,7 @@ const App = () => {
             // navpična črta
             doc.line(11, yOffset - 2, 11, yOffset ); // x1, y1, x2, y2
             // poševna črta
-            doc.line(11, yOffset , 15, yOffset -4); // x1, y1, x2, y2
+            doc.line(11, yOffset , 14, yOffset -4); // x1, y1, x2, y2
           }
 
           // Add the text next to the checkbox
