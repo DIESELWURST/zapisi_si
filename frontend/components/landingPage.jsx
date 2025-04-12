@@ -15,7 +15,7 @@ const LandingPage = () => (
     <div className='intro'>
       <h1>Capture Your Thoughts Seamlessly</h1>
       <h2>With ZapišiSi, your ideas are always within reach. Organize, plan, and capture everything that matters.</h2>
-      <img src="../src/landing.png" alt="Pis" className='landing_img' />
+      <img src="../src/landing.jpg" alt="Pis" className='landing_img' />
     </div>
 
     <div className='features-section'>
