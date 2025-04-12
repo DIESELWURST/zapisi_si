@@ -132,3 +132,11 @@ body {
 .footer-links a:hover {
     text-decoration: underline;
 }
+
+.landing_img {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    margin: 0 auto;
+    display: block;
+}
