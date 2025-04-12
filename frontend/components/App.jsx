@@ -148,7 +148,7 @@ const App = () => {
     doc.text(currentPage.title || "Untitled Page", 10, 10);
 
     // Add the page content
-    let yOffset = 20; // Vertical offset for content
+    let yOffset = 35; // Vertical offset for content
     currentPage.content.forEach((component) => {
       doc.setFontSize(14);
 
