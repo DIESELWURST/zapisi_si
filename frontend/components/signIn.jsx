@@ -12,7 +12,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   const [otpError, setOtpError] = useState('');
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [resetStep, setResetStep] = useState(1); // 1: Enter email, 2: Enter OTP and new password
+  const [resetStep, setResetStep] = useState(1); // 1: Enter email, 2:  OTP and novo geslo
   const navigate = useNavigate();
 
   const checkCreds = async (credentials, password) => {
@@ -29,13 +29,13 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   const handleSignIn = async (event) => {
     event.preventDefault();
 
-    // Hash the password before sending it to the backend
+    // Hashamo geslo pred pošiljanjem na backend
     const hashedPassword = await hashPassword(password);
 
     const result = await checkCreds(credentials, hashedPassword);
     if (result.exists) {
       setIsAuthenticated(true);
-      setUser(result.user); // Assuming the backend returns user information
+      setUser(result.user);
       navigate('/app');
     } else if (result.error) {
       setCredsError(result.error);
@@ -115,7 +115,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
         <div className="bee-divider">
           <div className="bee-line"></div>
           <div className="bee-hexagon with-image">
-            <img src="assets/images/maja.png" alt="Bee" />
+            <img src="../src/zobobovec.png" alt="Pis" />
           </div>
           <div className="bee-line"></div>
         </div>
@@ -213,7 +213,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
         <div className="bee-divider">
           <div className="bee-line"></div>
           <div className="bee-hexagon with-image">
-            <img src="assets/images/maja.png" alt="Bee" />
+            <img src="../src/zobobovec.png" alt="Bee" />
           </div>
           <div className="bee-line"></div>
         </div>

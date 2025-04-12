@@ -39,8 +39,6 @@ const LandingPage = () => (
     <footer className='footer'>
       <p>ZapišiSi &copy; 2025. All Rights Reserved.</p>
       <div className='footer-links'>
-        <Link to="/privacy">Privacy Policy</Link>
-        <Link to="/terms">Terms of Service</Link>
         <Link to="/contact-us">Contact Us</Link>
       </div>
     </footer>
