@@ -154,7 +154,7 @@ const App = () => {
 
       if (component.type === "textBlock") {
         doc.text(component.content, 10, yOffset);
-        yOffset += 20;
+        yOffset += 10;
       } else if (component.type === "checklist") {
         component.items.forEach((item) => {
           // narišemo checkbox
