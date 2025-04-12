@@ -53,7 +53,7 @@ const RightBar = ({ onDeletePage,onExportPage }) => {
           </button>
           <button className="export-button" onClick={onExportPage}>
             Export
-            <img src="../src/download.svg" alt="Export Icon" />
+            <img src="../src/download.svg" alt="Export Icon"  style={{marginLeft:"20px",width:"50px",height:"50px"}}/>
           </button> 
         </div>
       </div>
