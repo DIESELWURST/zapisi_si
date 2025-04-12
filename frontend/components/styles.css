@@ -505,7 +505,7 @@ input:checked + .slider:before {
 }
 
 
-.delete-page-button {
+.delete-page-button, .export-button {
   margin-top: 25px;
   font-weight: bold;
   border-radius: 5px;
