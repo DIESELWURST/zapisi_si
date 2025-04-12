@@ -142,7 +142,8 @@ const App = () => {
 
     const doc = new jsPDF();
 
-    // Add the page title
+    // Naslov strani
+    doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif");
     doc.setFontSize(18);
     doc.text(currentPage.title || "Untitled Page", 10, 10);
 
@@ -150,7 +151,6 @@ const App = () => {
     let yOffset = 20; // Vertical offset for content
     currentPage.content.forEach((component) => {
       doc.setFontSize(14);
-      doc.text(`Component: ${component.type}`, 10, yOffset);
       yOffset += 10;
 
       if (component.type === "textBlock") {
@@ -159,7 +159,7 @@ const App = () => {
         yOffset += 10;
       } else if (component.type === "checklist") {
         component.items.forEach((item) => {
-          const checkbox = item.checked ? "[✔]" : "[ ]";
+          const checkbox = item.checked ? "☑" : "☐";
           doc.text(`${checkbox} ${item.content}`, 10, yOffset);
           yOffset += 10;
         });
