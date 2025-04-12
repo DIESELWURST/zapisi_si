@@ -37,7 +37,7 @@ const Contact = () => {
       <div className="bee-divider">
         <div className="bee-line"></div>
         <div className="bee-hexagon with-image">
-          <img src="../src/zobobovec.png" height="10px"alt="Pis"/>
+          <img src="../src/zobobovec.png" height="5px" width="5px"alt="Pis"/>
         </div>
         <div className="bee-line"></div>
       </div>
