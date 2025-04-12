@@ -171,7 +171,6 @@ const App = () => {
       }
     });
 
-    // Save the PDF
     doc.save(`${currentPage.title || "Untitled_Page"}.pdf`);
   };
 
