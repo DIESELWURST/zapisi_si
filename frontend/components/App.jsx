@@ -150,7 +150,7 @@ const App = () => {
     // Add the page content
     let yOffset = 20; // Vertical offset for content
     currentPage.content.forEach((component) => {
-      doc.setFontSize(14);
+      doc.setFontSize(18);
       yOffset += 10;
 
       if (component.type === "textBlock") {
@@ -164,9 +164,9 @@ const App = () => {
           yOffset += 10;
         });
       } else if (component.type === "toggleBlock") {
-        doc.text(`Title: ${component.title}`, 10, yOffset);
+        doc.text(`   ${component.title}`, 10, yOffset);
         yOffset += 10;
-        doc.text(`Content: ${component.content}`, 10, yOffset);
+        doc.text(`${component.content}`, 10, yOffset);
         yOffset += 10;
       }
     });
