@@ -56,7 +56,6 @@ body {
 .intro {
     text-align: center;
     margin-top: 50px;
-    margin-bottom: 300px;
     padding: 20px;
 }
 
@@ -135,7 +134,7 @@ body {
 
 .landing_img {
     width: 100%;
-    height: auto;
+    height: 300px;
     max-width: 600px;
     margin: 0 auto;
     display: block;
