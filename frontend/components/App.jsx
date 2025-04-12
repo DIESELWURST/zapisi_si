@@ -174,7 +174,7 @@ const App = () => {
         });
       } else if (component.type === "toggleBlock") {
         doc.text(`${component.title}`, 10, yOffset);
-        yOffset += 15;
+        yOffset += 10;
         doc.text(`${component.content}`, 20, yOffset);
         yOffset += 10;
       }
