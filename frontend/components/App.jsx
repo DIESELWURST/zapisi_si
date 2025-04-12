@@ -163,9 +163,9 @@ const App = () => {
           // Če je bil checked, narišemo kljukico
           if (item.checked) {
             // navpična črta
-            doc.line(11, yOffset - 10, 11, yOffset + 2); // x1, y1, x2, y2
+            doc.line(11, yOffset - 5, 11, yOffset + 2); // x1, y1, x2, y2
             // poševna črta
-            doc.line(11, yOffset + 2, 14, yOffset -10); // x1, y1, x2, y2
+            doc.line(11, yOffset + 2, 16, yOffset -5); // x1, y1, x2, y2
           }
 
           // Add the text next to the checkbox
