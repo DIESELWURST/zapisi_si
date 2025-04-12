@@ -167,7 +167,7 @@ const SignUp = () => {
         <div className="bee-divider">
           <div className="bee-line"></div>
           <div className="bee-hexagon with-image">
-            <img src="assets/images/maja.png" alt="Bee" />
+            <img src="../src/zobobovec.png" alt="Pis" />
           </div>
           <div className="bee-line"></div>
         </div>
@@ -271,7 +271,7 @@ const SignUp = () => {
         <div className="bee-divider">
           <div className="bee-line"></div>
           <div className="bee-hexagon with-image">
-            <img src="assets/images/maja.png" alt="Bee" />
+            <img src="../src/zobobovec.png" alt="Pis" />
           </div>
           <div className="bee-line"></div>
         </div>
