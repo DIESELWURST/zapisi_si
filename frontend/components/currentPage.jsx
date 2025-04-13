@@ -86,19 +86,23 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
     switch (component.type) {
       case "textBlock":
         return (
-          <TextBlock
+          <div
             key={component.id}
-            content={component.content}
-            onUpdate={(newContent) => {
-              const newComponents = [...components];
-              newComponents[index].content = newContent;
-              setComponents(newComponents);
-            }}
-            onDragStart={() => handleDragStart(index)}
-            onDragEnter={() => handleDragEnter(index)}
-            onDragEnd={handleDragEnd}
-            onAddComponent={() => handleAddComponent(index, "textBlock")}
-          />
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onAddComponent={() => handleAddComponent(index, component.type)}    
+              className="draggable-item"
+          >
+            <TextBlock
+              content={component.content}
+              onUpdate={(newContent) => {
+                const newComponents = [...components];
+                newComponents[index].content = newContent;
+                setComponents(newComponents);
+              }}
+            />
+            </div>
         );
       case "checklist":
         return (
