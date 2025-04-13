@@ -14,9 +14,9 @@ body {
   color: rgba(255, 255, 255, 0.85);
 }
 .flex {
-  display: flex;
   height: 100vh;
   margin-left: 550px;
+  background-color: #191919;
 }
 
 
