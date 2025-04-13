@@ -109,7 +109,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   };
 
   return (
-    <div>
+    <div style={{backgroundColor:'black'}}>
       <Link to="/"><img src='../src/home.png' style={{ margin: '10px 0px 0px 10px' }} /></Link>
       <div className='auth-container'>
         <div className="bee-divider">

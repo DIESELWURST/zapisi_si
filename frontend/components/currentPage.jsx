@@ -149,19 +149,22 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
   };
 
   return (
-    <div 
+    <div className="flex">
+      
+        <div
           ref={titleRef}
-          className="pageName flex"
+          className="pageName"
           contentEditable
           suppressContentEditableWarning
           onInput={handleTitleChange}
           onKeyDown={handleKeyDown}
         >
           {editingTitle || "Untitled Page"}
-        
+        </div>
 
         {components.map((component, index) => renderComponent(component, index))}
       </div>
+
   );
 };
 
