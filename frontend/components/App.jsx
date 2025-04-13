@@ -8,7 +8,8 @@ import SignUp from "./signUp";
 import SignIn from "./signIn";
 import Contact from "./Contact";
 import "./styles.css";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
+import { parse } from "node-html-parser"; // Install this library: npm install node-html-parser
 
 const App = () => {
   const [pages, setPages] = useState([]);
@@ -147,13 +148,46 @@ const App = () => {
     doc.setFontSize(20);
     doc.text(currentPage.title || "Untitled Page", 10, 10);
 
+
+    let yOffset = 35; 
+
+    // Funkcija za renderanje besedila brez html tagov
+    const renderStyledText = (html, x, y) => {
+      const root = parse(html); // Parsamo HTML vsebino
+      root.childNodes.forEach((node) => {
+        if (node.nodeType === 3) {
+          doc.text(node.rawText, x, y);
+          x += doc.getTextWidth(node.rawText);
+        } else if (node.tagName === "b" || node.tagName === "strong") {
+          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "bold");
+          doc.text(node.text, x, y);
+          x += doc.getTextWidth(node.text);
+          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "normal"); 
+        } else if (node.tagName === "i" || node.tagName === "em") {
+          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "italic");
+          doc.text(node.text, x, y);
+          x += doc.getTextWidth(node.text);
+          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "normal"); 
+        } else if (node.tagName === "u") {
+          const textWidth = doc.getTextWidth(node.text);
+          doc.text(node.text, x, y);
+          doc.line(x, y + 1, x + textWidth, y + 1); // Narišemo podčrtaj
+          x += textWidth;
+        } else if (node.tagName === "s") {
+          const textWidth = doc.getTextWidth(node.text);
+          doc.text(node.text, x, y);
+          doc.line(x, y - 2, x + textWidth, y - 2); // Bo prečrtano
+          x += textWidth;
+        }
+      });
+    };
+
     // Add the page content
-    let yOffset = 35; // Vertical offset for content
     currentPage.content.forEach((component) => {
       doc.setFontSize(14);
 
       if (component.type === "textBlock") {
-        doc.text(component.content, 10, yOffset);
+        renderStyledText(component.content, 10, yOffset);
         yOffset += 10;
       } else if (component.type === "checklist") {
         component.items.forEach((item) => {
@@ -162,20 +196,20 @@ const App = () => {
 
           // Če je bil checked, narišemo kljukico
           if (item.checked) {
-            // navpična črta
+// navpična črta
             doc.line(21, yOffset - 2, 21, yOffset ); // x1, y1, x2, y2
             // poševna črta
             doc.line(21, yOffset , 24, yOffset -4); // x1, y1, x2, y2
           }
-
-          // Add the text next to the checkbox
-          doc.text(item.content, 30, yOffset);
+          renderStyledText(item.content, 30, yOffset);
           yOffset += 10;
         });
       } else if (component.type === "toggleBlock") {
-        doc.text(`${component.title}`, 10, yOffset);
+        doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "bold");
+        doc.text(component.title, 10, yOffset);
         yOffset += 10;
-        doc.text(`${component.content}`, 20, yOffset);
+        doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "normal");
+        renderStyledText(component.content, 20, yOffset);
         yOffset += 10;
       }
     });
