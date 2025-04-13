@@ -150,7 +150,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
 
   return (
     <div className="flex">
-      <div className=" bg-black text-white p-6 ml-40">
+      <div className="">
         <div
           ref={titleRef}
           className="pageName"
