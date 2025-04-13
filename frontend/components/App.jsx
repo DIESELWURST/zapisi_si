@@ -154,37 +154,49 @@ const App = () => {
     // Funkcija za renderanje besedila brez html tagov
     const renderStyledText = (html, x, y) => {
       const root = parse(html); // Parse the HTML content
-      console.log(parse(html));
+
       const processNode = (node, x, y) => {
         if (node.nodeType === 3) {
           // Text node
           doc.text(node.rawText, x, y);
           return doc.getTextWidth(node.rawText); // Return the width of the text
-        } else if (node.tagName === "b" || node.tagName === "strong") {
-          // Bold text
-          doc.setFont("Times", "bold");
-          const width = processChildNodes(node, x, y);
-          doc.setFont("Times", "normal"); // Reset font
-          return width;
-        } else if (node.tagName === "i" || node.tagName === "em") {
-          // Italic text
-          doc.setFont("Times", "italic");
-          const width = processChildNodes(node, x, y);
-          doc.setFont("Times", "normal"); // Reset font
-          return width;
-        } else if (node.tagName === "u") {
-          // Underlined text
-          const width = processChildNodes(node, x, y);
-          doc.line(x, y + 1, x + width, y + 1); // Draw underline
-          return width;
-        } else if (node.tagName === "s") {
-          // Strikethrough text
-          const width = processChildNodes(node, x, y);
-          doc.line(x, y - 2, x + width, y - 2); // Draw strikethrough
-          return width;
         } else {
-          // Default case: process child nodes
-          return processChildNodes(node, x, y);
+          // Apply styles based on the tag
+          let currentFont = "normal";
+          let isUnderlined = false;
+          let isStrikethrough = false;
+
+          if (node.tagName === "b" || node.tagName === "strong") {
+            currentFont = "bold";
+          } else if (node.tagName === "i" || node.tagName === "em") {
+            currentFont = "italic";
+          }
+
+          if (node.tagName === "u") {
+            isUnderlined = true;
+          }
+
+          if (node.tagName === "s" || node.tagName === "strike") {
+            isStrikethrough = true;
+          }
+
+          // Apply the font style
+          doc.setFont("Times", currentFont);
+
+          // Process child nodes recursively
+          const width = processChildNodes(node, x, y);
+
+          // Draw underline or strikethrough if needed
+          if (isUnderlined) {
+            doc.line(x, y + 1, x + width, y + 1); // Draw underline
+          }
+          if (isStrikethrough) {
+            doc.line(x, y - 2, x + width, y - 2); // Draw strikethrough
+          }
+
+          // Reset font to normal after processing
+          doc.setFont("Times", "normal");
+          return width;
         }
       };
 
