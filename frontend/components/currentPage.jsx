@@ -97,7 +97,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
             onDragStart={() => handleDragStart(index)}
             onDragEnter={() => handleDragEnter(index)}
             onDragEnd={handleDragEnd}
-            onAddComponent={() => handleAddComponent(index, component.type)}
+            onAddComponent={() => handleAddComponent(index, "textBlock")}
           />
         );
       case "checklist":
