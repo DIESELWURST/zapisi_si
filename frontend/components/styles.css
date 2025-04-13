@@ -15,7 +15,7 @@ body {
 }
 .flex {
   display: flex;
-  height: auto;
+  height: 100%;
   margin-left: 550px;
 }
 
