@@ -159,14 +159,14 @@ const App = () => {
         let currentX = x;
 
         // Regular expressions for detecting styles
-        const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<s>(.*?)<\/s>/g;
+        const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<strike>(.*?)<\/strike>|<sub>(.*?)<\/sub>|<sup>(.*?)<\/sup>/g;
 
         let match;
         let lastIndex = 0;
 
         // Process each match in the line
         while ((match = styleRegex.exec(line)) !== null) {
-          const [fullMatch, boldText, italicText, underlineText, strikethroughText] = match;
+          const [fullMatch, boldText, italicText, underlineText, strikethroughText, subscriptText, superscriptText] = match;
 
           // Render text before the current match
           const beforeText = line.slice(lastIndex, match.index);
@@ -197,6 +197,14 @@ const App = () => {
             const textWidth = doc.getTextWidth(strikethroughText);
             doc.line(currentX, y - 2, currentX + textWidth, y - 2); // Draw strikethrough
             currentX += textWidth;
+          } else if (subscriptText) {
+            doc.setFont("Times", "normal");
+            doc.text(subscriptText, currentX, y + 3); // Subscript is rendered slightly lower
+            currentX += doc.getTextWidth(subscriptText);
+          } else if (superscriptText) {
+            doc.setFont("Times", "normal");
+            doc.text(superscriptText, currentX, y - 3); // Superscript is rendered slightly higher
+            currentX += doc.getTextWidth(superscriptText);
           }
 
           // Update the last index to the end of the current match
@@ -247,7 +255,6 @@ const App = () => {
         yOffset += 10;
       }
     });
-
     // Shranimo PDF
     doc.save(`${currentPage.title || "Untitled_Page"}.pdf`);
   };
