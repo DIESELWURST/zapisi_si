@@ -26,13 +26,12 @@ const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onA
     setShowMenu(false);
   };
 
-  addEventListener("keydown", (event) => {
+  const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      event.preventDefault();
-      onAddComponent();
+      event.preventDefault(); // Onemogočimo Enter
+      onAddComponent(); // Dodamo nov textBlock
     }
-  }
-  );
+  };
 
   return (
     <div className="text-block draggable-item">
@@ -51,6 +50,7 @@ const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onA
         suppressContentEditableWarning
         onContextMenu={handleContextMenu}
         onBlur={handleTextChange}
+        onKeyDown={handleKeyDown} // Attach the keydown event listener here
         className="text"
       >
         {content}
