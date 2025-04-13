@@ -2,54 +2,6 @@ import React, { useState, useRef } from "react";
 import Formater from "./Formater";
 import "../components/styles.css";
 
-const renderStyledText = (html, x, y) => {
-  const root = parse(html); // Parse the HTML content
-
-  const processNode = (node, x, y) => {
-    if (node.nodeType === 3) {
-      // Text node
-      doc.text(node.rawText, x, y);
-      return doc.getTextWidth(node.rawText); // Return the width of the text
-    } else if (node.tagName === "b" || node.tagName === "strong") {
-      // Bold text
-      doc.setFont("Times", "bold");
-      const width = processChildNodes(node, x, y);
-      doc.setFont("Times", "normal"); // Reset font
-      return width;
-    } else if (node.tagName === "i" || node.tagName === "em") {
-      // Italic text
-      doc.setFont("Times", "italic");
-      const width = processChildNodes(node, x, y);
-      doc.setFont("Times", "normal"); // Reset font
-      return width;
-    } else if (node.tagName === "u") {
-      // Underlined text
-      const width = processChildNodes(node, x, y);
-      doc.line(x, y + 1, x + width, y + 1); // Draw underline
-      return width;
-    } else if (node.tagName === "s") {
-      // Strikethrough text
-      const width = processChildNodes(node, x, y);
-      doc.line(x, y - 2, x + width, y - 2); // Draw strikethrough
-      return width;
-    } else {
-      // Default case: process child nodes
-      return processChildNodes(node, x, y);
-    }
-  };
-
-  const processChildNodes = (node, x, y) => {
-    let currentX = x;
-    node.childNodes.forEach((child) => {
-      const width = processNode(child, currentX, y);
-      currentX += width; // Update x position for the next node
-    });
-    return currentX - x; // Return total width of processed nodes
-  };
-
-  processChildNodes(root, x, y);
-};
-
 const ToggleBlock = ({
   title,
   content,
@@ -89,7 +41,7 @@ const ToggleBlock = ({
   };
 
   const handleTitleChange = (event) => {
-    const newTitle = event.target.innerHTML.replace(/^[▼▶]\s*/, "");
+    const newTitle = event.target.innerHtml.replace(/^[▼▶]\s*/, "");
     onTitleUpdate(newTitle);
   };
 

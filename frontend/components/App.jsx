@@ -157,23 +157,28 @@ const App = () => {
 
       const processNode = (node, x, y) => {
         if (node.nodeType === 3) {
-                    doc.text(node.rawText, x, y);
+          // Text node
+          doc.text(node.rawText, x, y);
           return doc.getTextWidth(node.rawText); // Return the width of the text
         } else if (node.tagName === "b" || node.tagName === "strong") {
+          // Bold text
           doc.setFont("Times", "bold");
           const width = processChildNodes(node, x, y);
           doc.setFont("Times", "normal"); // Reset font
           return width;
         } else if (node.tagName === "i" || node.tagName === "em") {
+          // Italic text
           doc.setFont("Times", "italic");
           const width = processChildNodes(node, x, y);
           doc.setFont("Times", "normal"); // Reset font
           return width;
         } else if (node.tagName === "u") {
+          // Underlined text
           const width = processChildNodes(node, x, y);
           doc.line(x, y + 1, x + width, y + 1); // Draw underline
           return width;
         } else if (node.tagName === "s") {
+          // Strikethrough text
           const width = processChildNodes(node, x, y);
           doc.line(x, y - 2, x + width, y - 2); // Draw strikethrough
           return width;
