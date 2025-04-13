@@ -158,66 +158,67 @@ const App = () => {
       lines.forEach((line) => {
         let currentX = x;
 
-        // Regular expressions for detecting styles
-        const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<strike>(.*?)<\/strike>|<sub>(.*?)<\/sub>|<sup>(.*?)<\/sup>/g;
+        // Recursive function to process styled text
+        const processStyledText = (text, x, y) => {
+          const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<s>(.*?)<\/s>|<sub>(.*?)<\/sub>|<sup>(.*?)<\/sup>/g;
+          let match;
+          let lastIndex = 0;
 
-        let match;
-        let lastIndex = 0;
+          while ((match = styleRegex.exec(text)) !== null) {
+            const [fullMatch, boldText, italicText, underlineText, strikethroughText, subscriptText, superscriptText] = match;
 
-        // Process each match in the line
-        while ((match = styleRegex.exec(line)) !== null) {
-          const [fullMatch, boldText, italicText, underlineText, strikethroughText, subscriptText, superscriptText] = match;
+            // Render text before the current match
+            const beforeText = text.slice(lastIndex, match.index);
+            if (beforeText) {
+              doc.setFont("Times", "normal");
+              doc.text(beforeText, x, y);
+              x += doc.getTextWidth(beforeText);
+            }
 
-          // Render text before the current match
-          const beforeText = line.slice(lastIndex, match.index);
-          if (beforeText) {
-            doc.setFont("Times", "normal");
-            doc.text(beforeText, currentX, y);
-            currentX += doc.getTextWidth(beforeText);
+            // Render the styled text
+            if (boldText) {
+              doc.setFont("Times", "bold");
+              x = processStyledText(boldText, x, y); // Recursively process nested styles
+              doc.setFont("Times", "normal"); // Reset font
+            } else if (italicText) {
+              doc.setFont("Times", "italic");
+              x = processStyledText(italicText, x, y); // Recursively process nested styles
+              doc.setFont("Times", "normal"); // Reset font
+            } else if (underlineText) {
+              const startX = x;
+              x = processStyledText(underlineText, x, y); // Recursively process nested styles
+              doc.line(startX, y + 1, x, y + 1); // Draw underline
+            } else if (strikethroughText) {
+              const startX = x;
+              x = processStyledText(strikethroughText, x, y); // Recursively process nested styles
+              doc.line(startX, y - 2, x, y - 2); // Draw strikethrough
+            } else if (subscriptText) {
+              doc.setFont("Times", "normal");
+              doc.text(subscriptText, x, y + 3); // Subscript is rendered slightly lower
+              x += doc.getTextWidth(subscriptText);
+            } else if (superscriptText) {
+              doc.setFont("Times", "normal");
+              doc.text(superscriptText, x, y - 3); // Superscript is rendered slightly higher
+              x += doc.getTextWidth(superscriptText);
+            }
+
+            // Update the last index to the end of the current match
+            lastIndex = match.index + fullMatch.length;
           }
 
-          // Render the styled text
-          if (boldText) {
-            doc.setFont("Times", "bold");
-            doc.text(boldText, currentX, y);
-            currentX += doc.getTextWidth(boldText);
-          } else if (italicText) {
-            doc.setFont("Times", "italic");
-            doc.text(italicText, currentX, y);
-            currentX += doc.getTextWidth(italicText);
-          } else if (underlineText) {
+          // Render any remaining text after the last match
+          const remainingText = text.slice(lastIndex);
+          if (remainingText) {
             doc.setFont("Times", "normal");
-            doc.text(underlineText, currentX, y);
-            const textWidth = doc.getTextWidth(underlineText);
-            doc.line(currentX, y + 1, currentX + textWidth, y + 1); // Draw underline
-            currentX += textWidth;
-          } else if (strikethroughText) {
-            doc.setFont("Times", "normal");
-            doc.text(strikethroughText, currentX, y);
-            const textWidth = doc.getTextWidth(strikethroughText);
-            doc.line(currentX, y - 2, currentX + textWidth, y - 2); // Draw strikethrough
-            currentX += textWidth;
-          } else if (subscriptText) {
-            doc.setFont("Times", "normal");
-            doc.text(subscriptText, currentX, y + 3); // Subscript is rendered slightly lower
-            currentX += doc.getTextWidth(subscriptText);
-          } else if (superscriptText) {
-            doc.setFont("Times", "normal");
-            doc.text(superscriptText, currentX, y - 3); // Superscript is rendered slightly higher
-            currentX += doc.getTextWidth(superscriptText);
+            doc.text(remainingText, x, y);
+            x += doc.getTextWidth(remainingText);
           }
 
-          // Update the last index to the end of the current match
-          lastIndex = match.index + fullMatch.length;
-        }
+          return x; // Return the updated x position
+        };
 
-        // Render any remaining text after the last match
-        const remainingText = line.slice(lastIndex);
-        if (remainingText) {
-          doc.setFont("Times", "normal");
-          doc.text(remainingText, currentX, y);
-          currentX += doc.getTextWidth(remainingText);
-        }
+        // Process the current line
+        currentX = processStyledText(line, currentX, y);
 
         // Move to the next line
         y += 10;
