@@ -88,10 +88,10 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
         return (
           <div
             key={component.id}
+              draggable
               onDragStart={() => handleDragStart(index)}
               onDragEnter={() => handleDragEnter(index)}
-              onDragEnd={handleDragEnd}
-              onAddComponent={() => handleAddComponent(index, component.type)}    
+              onDragEnd={handleDragEnd}   
               className="draggable-item"
           >
             <TextBlock
