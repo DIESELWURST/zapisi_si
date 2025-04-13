@@ -154,7 +154,7 @@ const App = () => {
     // Funkcija za renderanje besedila brez html tagov
     const renderStyledText = (html, x, y) => {
       const root = parse(html); // Parse the HTML content
-
+      console.log(parse(html));
       const processNode = (node, x, y) => {
         if (node.nodeType === 3) {
           // Text node
