@@ -162,7 +162,7 @@ const App = () => {
           doc.setFont("Times", "bold");
           doc.text(node.text, x, y);
           x += doc.getTextWidth(node.text);
-          doc.setFont("Times", "normal"); 
+          doc.setFont("Times"); 
         } else if (node.tagName === "i" || node.tagName === "em") {
           doc.setFont("Times", "italic");
           doc.text(node.text, x, y);
