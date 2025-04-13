@@ -161,7 +161,7 @@ const SignUp = () => {
   const passwordValidation = validatePassword(password);
 
   return (
-    <div style={{ backgroundColor: 'black' }}>
+    <div style={{ backgroundColor: 'black', height: '100vh' }}>
       <Link to="/"><img src='../src/home.png' style={{ margin: '10px 0px 0px 10px' }} /></Link>
       <div className='auth-container'>
         <div className="bee-divider">

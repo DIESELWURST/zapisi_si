@@ -5,6 +5,11 @@
     font-family: "Means Web", Georgia, Times, "Times New Roman", serif;
 }
 
+.auth-container {
+
+    height: 80%;
+}
+
 .kontakt {
     background-color: #f0f0f0; 
     padding: 20px; 
