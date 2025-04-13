@@ -170,6 +170,11 @@ p {
   color: rgba(255, 255, 255, 0.5); 
 }
 
+.text-block {
+  display:flex;
+  flex-direction:row;
+  margin:0 auto;
+}
 .checklist {
   list-style-type: none;
 }
