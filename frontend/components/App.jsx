@@ -159,60 +159,57 @@ const App = () => {
         let currentX = x;
 
         // Regular expressions for detecting styles
-        const boldRegex = /<b>(.*?)<\/b>/g;
-        const italicRegex = /<i>(.*?)<\/i>/g;
-        const underlineRegex = /<u>(.*?)<\/u>/g;
-        const strikethroughRegex = /<s>(.*?)<\/s>/g;
+        const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<s>(.*?)<\/s>/g;
 
-        // Function to process and render styled text
-        const processStyledText = (line) => {
-          let remainingText = line;
+        let match;
+        let lastIndex = 0;
 
-          // Process bold text
-          remainingText = remainingText.replace(boldRegex, (match, text) => {
+        // Process each match in the line
+        while ((match = styleRegex.exec(line)) !== null) {
+          const [fullMatch, boldText, italicText, underlineText, strikethroughText] = match;
+
+          // Render text before the current match
+          const beforeText = line.slice(lastIndex, match.index);
+          if (beforeText) {
+            doc.setFont("Times", "normal");
+            doc.text(beforeText, currentX, y);
+            currentX += doc.getTextWidth(beforeText);
+          }
+
+          // Render the styled text
+          if (boldText) {
             doc.setFont("Times", "bold");
-            doc.text(text, currentX, y);
-            currentX += doc.getTextWidth(text);
-            doc.setFont("Times", "normal"); // Reset font
-            return ""; // Remove processed text
-          });
-
-          // Process italic text
-          remainingText = remainingText.replace(italicRegex, (match, text) => {
+            doc.text(boldText, currentX, y);
+            currentX += doc.getTextWidth(boldText);
+          } else if (italicText) {
             doc.setFont("Times", "italic");
-            doc.text(text, currentX, y);
-            currentX += doc.getTextWidth(text);
-            doc.setFont("Times", "normal"); // Reset font
-            return ""; // Remove processed text
-          });
-
-          // Process underlined text
-          remainingText = remainingText.replace(underlineRegex, (match, text) => {
-            doc.text(text, currentX, y);
-            const textWidth = doc.getTextWidth(text);
+            doc.text(italicText, currentX, y);
+            currentX += doc.getTextWidth(italicText);
+          } else if (underlineText) {
+            doc.setFont("Times", "normal");
+            doc.text(underlineText, currentX, y);
+            const textWidth = doc.getTextWidth(underlineText);
             doc.line(currentX, y + 1, currentX + textWidth, y + 1); // Draw underline
             currentX += textWidth;
-            return ""; // Remove processed text
-          });
-
-          // Process strikethrough text
-          remainingText = remainingText.replace(strikethroughRegex, (match, text) => {
-            doc.text(text, currentX, y);
-            const textWidth = doc.getTextWidth(text);
+          } else if (strikethroughText) {
+            doc.setFont("Times", "normal");
+            doc.text(strikethroughText, currentX, y);
+            const textWidth = doc.getTextWidth(strikethroughText);
             doc.line(currentX, y - 2, currentX + textWidth, y - 2); // Draw strikethrough
             currentX += textWidth;
-            return ""; // Remove processed text
-          });
-
-          // Render remaining normal text
-          if (remainingText) {
-            doc.text(remainingText, currentX, y);
-            currentX += doc.getTextWidth(remainingText);
           }
-        };
 
-        // Process the current line
-        processStyledText(line);
+          // Update the last index to the end of the current match
+          lastIndex = match.index + fullMatch.length;
+        }
+
+        // Render any remaining text after the last match
+        const remainingText = line.slice(lastIndex);
+        if (remainingText) {
+          doc.setFont("Times", "normal");
+          doc.text(remainingText, currentX, y);
+          currentX += doc.getTextWidth(remainingText);
+        }
 
         // Move to the next line
         y += 10;
