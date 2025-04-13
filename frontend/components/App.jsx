@@ -144,7 +144,7 @@ const App = () => {
     const doc = new jsPDF();
 
     // Naslov strani
-    doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif");
+    doc.setFont("Times");
     doc.setFontSize(20);
     doc.text(currentPage.title || "Untitled Page", 10, 10);
 
