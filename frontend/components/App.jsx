@@ -159,15 +159,15 @@ const App = () => {
           doc.text(node.rawText, x, y);
           x += doc.getTextWidth(node.rawText);
         } else if (node.tagName === "b" || node.tagName === "strong") {
-          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "bold");
+          doc.setFont("Times", "bold");
           doc.text(node.text, x, y);
           x += doc.getTextWidth(node.text);
-          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "normal"); 
+          doc.setFont("Times", "normal"); 
         } else if (node.tagName === "i" || node.tagName === "em") {
-          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "italic");
+          doc.setFont("Times", "italic");
           doc.text(node.text, x, y);
           x += doc.getTextWidth(node.text);
-          doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "normal"); 
+          doc.setFont("Times", "normal"); 
         } else if (node.tagName === "u") {
           const textWidth = doc.getTextWidth(node.text);
           doc.text(node.text, x, y);
@@ -205,10 +205,10 @@ const App = () => {
           yOffset += 10;
         });
       } else if (component.type === "toggleBlock") {
-        doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "bold");
+        doc.setFont("Times", "bold");
         doc.text(component.title, 10, yOffset);
         yOffset += 10;
-        doc.setFont("'Means Web', Georgia, Times, 'Times New Roman', serif", "normal");
+        doc.setFont("Times", "normal");
         renderStyledText(component.content, 20, yOffset);
         yOffset += 10;
       }
