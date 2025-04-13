@@ -160,7 +160,7 @@ const App = () => {
 
         // Recursive function to process styled text
         const processStyledText = (text, x, y) => {
-          const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<s>(.*?)<\/s>|<sub>(.*?)<\/sub>|<sup>(.*?)<\/sup>/g;
+          const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<strike>(.*?)<\/strike>|<sub>(.*?)<\/sub>|<sup>(.*?)<\/sup>/g;
           let match;
           let lastIndex = 0;
 
