@@ -35,14 +35,14 @@ const ToggleBlock = ({
 
   const handleContentChange = (event, lineIndex) => {
     const lines = content.split("\n");
-    lines[lineIndex] = event.target.innerText;
+    lines[lineIndex] = event.target.innerHTML; // Save formatted HTML
     const updatedContent = lines.join("\n");
     onUpdate(updatedContent);
   };
 
   const handleTitleChange = (event) => {
-    const newTitle = event.target.innerText.replace(/^[▼▶]\s*/, ""); 
-    onTitleUpdate(newTitle); 
+    const newTitle = event.target.innerHTML.replace(/^[▼▶]\s*/, "");
+    onTitleUpdate(newTitle);
   };
 
   const handleAddLine = (index) => {
@@ -91,11 +91,9 @@ const ToggleBlock = ({
             className="text"
             contentEditable
             suppressContentEditableWarning
-            onBlur={handleTitleChange}
-            onContextMenu={handleContextMenu}
-          >
-            {title}
-          </span>
+            onBlur={handleTitleChange} // Save changes on blur
+            dangerouslySetInnerHTML={{ __html: title }} // Render saved HTML
+          />
         </div>
       </div>
 
@@ -121,11 +119,9 @@ const ToggleBlock = ({
               <span
                 contentEditable
                 suppressContentEditableWarning
-                onBlur={(event) => handleContentChange(event, index)}
-                className="toggle-body-text"
-              >
-                {line}
-              </span>
+                onBlur={(event) => handleContentChange(event, index)} // Save changes on blur
+                dangerouslySetInnerHTML={{ __html: line }} // Render saved HTML
+              />
             </div>
           ))}
           {showMenu && (

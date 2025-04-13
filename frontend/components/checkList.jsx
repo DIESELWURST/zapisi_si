@@ -6,8 +6,6 @@ const Checklist = ({ items, setItems }) => {
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [showMenu, setShowMenu] = useState(false);
   const selectedTextRef = useRef("");
-  const dragItem = useRef();
-  const dragOverItem = useRef();
 
   const toggleCheck = (index) => {
     const newItems = [...items];
@@ -17,13 +15,12 @@ const Checklist = ({ items, setItems }) => {
 
   const handleTextChange = (index, event) => {
     const newItems = [...items];
-    newItems[index].content = event.target.innerText;
+    newItems[index].content = event.target.innerHTML; // Save formatted HTML
     setItems(newItems);
   };
 
   const handleContextMenu = (event, index) => {
     event.preventDefault();
-
     const selectedText = window.getSelection().toString();
     if (selectedText) {
       selectedTextRef.current = selectedText;
@@ -32,25 +29,19 @@ const Checklist = ({ items, setItems }) => {
     }
   };
 
-  const handleStyleClick = (style, index) => {
-    const newItems = [...items];
-    const currentItem = newItems[index];
-
-    // Apply inline styles if `document.execCommand` fails
-    try {
-      document.execCommand(style);
-    } catch (err) {
-      if (style === "bold") {
-        currentItem.content = `<b>${currentItem.content}</b>`;
-      } else if (style === "italic") {
-        currentItem.content = `<i>${currentItem.content}</i>`;
-      } else if (style === "strikeThrough") {
-        currentItem.content = `<s>${currentItem.content}</s>`;
-      }
-    }
-
-    setItems(newItems);
+  const handleStyleClick = (style) => {
+    document.execCommand(style); // Apply the style
     setShowMenu(false);
+  };
+
+  const handleAddItem = (index) => {
+    const newItems = [...items];
+    newItems.splice(index + 1, 0, {
+      id: newItems.length + 1,
+      content: "New Checklist Item",
+      checked: false,
+    });
+    setItems(newItems);
   };
 
   const handleDragStart = (index) => {
@@ -68,16 +59,6 @@ const Checklist = ({ items, setItems }) => {
     setItems(newItems);
     dragItem.current = null;
     dragOverItem.current = null;
-  };
-
-  const handleAddItem = (index) => {
-    const newItems = [...items];
-    newItems.splice(index + 1, 0, {
-      id: newItems.length + 1,
-      content: "New Checklist Item",
-      checked: false,
-    });
-    setItems(newItems);
   };
 
   return (
@@ -111,23 +92,20 @@ const Checklist = ({ items, setItems }) => {
               {item.checked && <span className="arrow">✔</span>}
             </span>
             <span
-              className={` text checklist-text ${item.checked ? "completed" : ""}`}
+              className={`text checklist-text ${item.checked ? "completed" : ""}`}
               contentEditable
               suppressContentEditableWarning
-              onBlur={(event) => handleTextChange(index, event)}
-              onContextMenu={(e) => handleContextMenu(e, index)} // Attach context menu to each item
-            >
-              {item.content}
-            </span>
+              onBlur={(event) => handleTextChange(index, event)} // Save changes on blur
+              onContextMenu={(e) => handleContextMenu(e, index)} // Show Formater on right-click
+              dangerouslySetInnerHTML={{ __html: item.content }} // Render saved HTML
+            />
           </li>
         ))}
       </ul>
       {showMenu && (
         <Formater
           position={menuPosition}
-          onStyleClick={(style) =>
-            handleStyleClick(style, items.findIndex((item) => item.content.includes(selectedTextRef.current)))
-          }
+          onStyleClick={handleStyleClick}
         />
       )}
     </div>

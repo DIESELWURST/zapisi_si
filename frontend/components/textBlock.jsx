@@ -8,7 +8,7 @@ const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onA
   const selectedTextRef = useRef("");
 
   const handleTextChange = (event) => {
-    onUpdate(event.target.innerText);
+    onUpdate(event.target.innerHTML); // Save the formatted HTML
   };
 
   const handleContextMenu = (event) => {
@@ -52,9 +52,8 @@ const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onA
         onBlur={handleTextChange}
         onKeyDown={handleKeyDown} // Attach the keydown event listener here
         className="text"
-      >
-        {content}
-      </div>
+        dangerouslySetInnerHTML={{ __html: content }} // Render saved HTML
+      />
       {showMenu && <Formater position={menuPosition} onStyleClick={handleStyleClick} />}
     </div>
   );
