@@ -153,33 +153,46 @@ const App = () => {
 
     // Funkcija za renderanje besedila brez html tagov
     const renderStyledText = (html, x, y) => {
-      const root = parse(html); // Parsamo HTML vsebino
-      root.childNodes.forEach((node) => {
+      const root = parse(html); // Parse the HTML content
+
+      const processNode = (node, x, y) => {
         if (node.nodeType === 3) {
-          doc.text(node.rawText, x, y);
-          x += doc.getTextWidth(node.rawText);
+                    doc.text(node.rawText, x, y);
+          return doc.getTextWidth(node.rawText); // Return the width of the text
         } else if (node.tagName === "b" || node.tagName === "strong") {
           doc.setFont("Times", "bold");
-          doc.text(node.text, x, y);
-          x += doc.getTextWidth(node.text);
-          doc.setFont("Times"); 
+          const width = processChildNodes(node, x, y);
+          doc.setFont("Times", "normal"); // Reset font
+          return width;
         } else if (node.tagName === "i" || node.tagName === "em") {
           doc.setFont("Times", "italic");
-          doc.text(node.text, x, y);
-          x += doc.getTextWidth(node.text);
-          doc.setFont("Times", "normal"); 
+          const width = processChildNodes(node, x, y);
+          doc.setFont("Times", "normal"); // Reset font
+          return width;
         } else if (node.tagName === "u") {
-          const textWidth = doc.getTextWidth(node.text);
-          doc.text(node.text, x, y);
-          doc.line(x, y + 1, x + textWidth, y + 1); // Narišemo podčrtaj
-          x += textWidth;
+          const width = processChildNodes(node, x, y);
+          doc.line(x, y + 1, x + width, y + 1); // Draw underline
+          return width;
         } else if (node.tagName === "s") {
-          const textWidth = doc.getTextWidth(node.text);
-          doc.text(node.text, x, y);
-          doc.line(x, y - 2, x + textWidth, y - 2); // Bo prečrtano
-          x += textWidth;
+          const width = processChildNodes(node, x, y);
+          doc.line(x, y - 2, x + width, y - 2); // Draw strikethrough
+          return width;
+        } else {
+          // Default case: process child nodes
+          return processChildNodes(node, x, y);
         }
-      });
+      };
+
+      const processChildNodes = (node, x, y) => {
+        let currentX = x;
+        node.childNodes.forEach((child) => {
+          const width = processNode(child, currentX, y);
+          currentX += width; // Update x position for the next node
+        });
+        return currentX - x; // Return total width of processed nodes
+      };
+
+      processChildNodes(root, x, y);
     };
 
     // Add the page content
@@ -196,7 +209,7 @@ const App = () => {
 
           // Če je bil checked, narišemo kljukico
           if (item.checked) {
-// navpična črta
+          // navpična črta
             doc.line(21, yOffset - 2, 21, yOffset ); // x1, y1, x2, y2
             // poševna črta
             doc.line(21, yOffset , 24, yOffset -4); // x1, y1, x2, y2
