@@ -33,14 +33,14 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
     switch (type) {
       case "textBlock":
         console.log("Adding text block");
-        newComponent = { id: newComponents.length + 1, type: "textBlock", content: "New Text Block" };
+        newComponent = { id: newComponents.length + 1, type: "textBlock", content: "" };
         break;
       case "checklist":
         newComponent = {
           id: newComponents.length + 1,
           type: "checklist",
           items: [
-            { id: 1, content: "New Checklist Item", checked: false },
+            { id: 1, content: "", checked: false },
           ],
         };
         break;
@@ -53,7 +53,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
         };
         break;
       default:
-        newComponent = { id: newComponents.length + 1, type: "textBlock", content: "New Component" };
+        newComponent = { id: newComponents.length + 1, type: "textBlock", content: "" };
     }
     newComponents.splice(index + 1, 0, newComponent);
     setComponents(newComponents);
