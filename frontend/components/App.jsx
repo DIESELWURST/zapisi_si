@@ -62,7 +62,9 @@ const App = () => {
       if (data.pages) {
         setPages(data.pages);
         if (data.pages.length > 0 && !currentPageId) {
-          setCurrentPageId(data.pages[0].page_id);
+          const firstPageId = data.pages[0].page_id;
+          setCurrentPageId(firstPageId);
+          localStorage.setItem('currentPageId', firstPageId); // Save to localStorage
         }
       } else {
         setPages([]);
