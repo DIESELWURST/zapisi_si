@@ -153,63 +153,65 @@ const App = () => {
 
     // Funkcija za renderanje besedila brez html tagov
     const renderStyledText = (html, x, y) => {
-      const root = parse(html); // Parse the HTML content
+      const lines = html.split("\n"); // Split the content into lines
 
-      const processNode = (node, x, y) => {
-        if (node.nodeType === 3) {
-          // Text node
-          doc.text(node.rawText, x, y);
-          return doc.getTextWidth(node.rawText); // Return the width of the text
-        } else {
-          // Apply styles based on the tag
-          let currentFont = "normal";
-          let isUnderlined = false;
-          let isStrikethrough = false;
-
-          if (node.tagName === "b" || node.tagName === "strong") {
-            currentFont = "bold";
-          } else if (node.tagName === "i" || node.tagName === "em") {
-            currentFont = "italic";
-          }
-
-          if (node.tagName === "u") {
-            isUnderlined = true;
-          }
-
-          if (node.tagName === "s" || node.tagName === "strike") {
-            isStrikethrough = true;
-          }
-
-          // Apply the font style
-          doc.setFont("Times", currentFont);
-
-          // Process child nodes recursively
-          const width = processChildNodes(node, x, y);
-
-          // Draw underline or strikethrough if needed
-          if (isUnderlined) {
-            doc.line(x, y + 1, x + width, y + 1); // Draw underline
-          }
-          if (isStrikethrough) {
-            doc.line(x, y - 2, x + width, y - 2); // Draw strikethrough
-          }
-
-          // Reset font to normal after processing
-          doc.setFont("Times", "normal");
-          return width;
-        }
-      };
-
-      const processChildNodes = (node, x, y) => {
+      lines.forEach((line) => {
         let currentX = x;
-        node.childNodes.forEach((child) => {
-          const width = processNode(child, currentX, y);
-          currentX += width; // Update x position for the next node
-        });
-        return currentX - x; // Return total width of processed nodes
-      };
 
-      processChildNodes(root, x, y);
+        // Regular expressions for detecting styles
+        const boldRegex = /<b>(.*?)<\/b>/g;
+        const italicRegex = /<i>(.*?)<\/i>/g;
+        const underlineRegex = /<u>(.*?)<\/u>/g;
+        const strikethroughRegex = /<s>(.*?)<\/s>/g;
+
+        // Function to process a line and apply styles
+        const processLine = (line, regex, style, drawLine = false) => {
+          let match;
+          while ((match = regex.exec(line)) !== null) {
+            const [fullMatch, text] = match;
+
+            // Text before the styled text
+            const beforeText = line.slice(0, match.index);
+            if (beforeText) {
+              doc.setFont("Times", "normal");
+              doc.text(beforeText, currentX, y);
+              currentX += doc.getTextWidth(beforeText);
+            }
+
+            // Styled text
+            doc.setFont("Times", style);
+            doc.text(text, currentX, y);
+
+            // Draw underline or strikethrough if needed
+            const textWidth = doc.getTextWidth(text);
+            if (drawLine) {
+              const lineY = style === "underline" ? y + 1 : y - 2;
+              doc.line(currentX, lineY, currentX + textWidth, lineY);
+            }
+
+            currentX += textWidth;
+
+            // Remove the processed part from the line
+            line = line.slice(match.index + fullMatch.length);
+            regex.lastIndex = 0; // Reset regex index for the next match
+          }
+
+          // Remaining text after the last match
+          if (line) {
+            doc.setFont("Times", "normal");
+            doc.text(line, currentX, y);
+            currentX += doc.getTextWidth(line);
+          }
+        };
+
+        // Process the line for each style
+        processLine(line, boldRegex, "bold");
+        processLine(line, italicRegex, "italic");
+        processLine(line, underlineRegex, "normal", true); // Underline requires a line
+        processLine(line, strikethroughRegex, "normal", true); // Strikethrough requires a line
+
+        y += 10; // Move to the next line
+      });
     };
 
     // Add the page content
