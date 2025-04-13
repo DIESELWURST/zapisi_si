@@ -150,7 +150,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
 
   return (
     <div className="flex">
-      <div style={{backgroundColor:"#191919"}}>
+      
         <div
           ref={titleRef}
           className="pageName"
@@ -164,7 +164,6 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
 
         {components.map((component, index) => renderComponent(component, index))}
       </div>
-    </div>
   );
 };
 
