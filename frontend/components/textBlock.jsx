@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import Formater from "./Formater";
 import "../components/styles.css";
+import { on } from "nodemailer/lib/xoauth2";
 
 const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onAddComponent }) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -25,6 +26,14 @@ const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onA
     document.execCommand(style);
     setShowMenu(false);
   };
+
+  addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      onAddComponent();
+    }
+  }
+  );
 
   return (
     <div className="text-block draggable-item">
