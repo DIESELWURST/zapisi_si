@@ -164,53 +164,58 @@ const App = () => {
         const underlineRegex = /<u>(.*?)<\/u>/g;
         const strikethroughRegex = /<s>(.*?)<\/s>/g;
 
-        // Function to process a line and apply styles
-        const processLine = (line, regex, style, drawLine = false) => {
-          let match;
-          while ((match = regex.exec(line)) !== null) {
-            const [fullMatch, text] = match;
+        // Function to process and render styled text
+        const processStyledText = (line) => {
+          let remainingText = line;
 
-            // Text before the styled text
-            const beforeText = line.slice(0, match.index);
-            if (beforeText) {
-              doc.setFont("Times", "normal");
-              doc.text(beforeText, currentX, y);
-              currentX += doc.getTextWidth(beforeText);
-            }
-
-            // Styled text
-            doc.setFont("Times", style);
+          // Process bold text
+          remainingText = remainingText.replace(boldRegex, (match, text) => {
+            doc.setFont("Times", "bold");
             doc.text(text, currentX, y);
+            currentX += doc.getTextWidth(text);
+            doc.setFont("Times", "normal"); // Reset font
+            return ""; // Remove processed text
+          });
 
-            // Draw underline or strikethrough if needed
+          // Process italic text
+          remainingText = remainingText.replace(italicRegex, (match, text) => {
+            doc.setFont("Times", "italic");
+            doc.text(text, currentX, y);
+            currentX += doc.getTextWidth(text);
+            doc.setFont("Times", "normal"); // Reset font
+            return ""; // Remove processed text
+          });
+
+          // Process underlined text
+          remainingText = remainingText.replace(underlineRegex, (match, text) => {
+            doc.text(text, currentX, y);
             const textWidth = doc.getTextWidth(text);
-            if (drawLine) {
-              const lineY = style === "underline" ? y + 1 : y - 2;
-              doc.line(currentX, lineY, currentX + textWidth, lineY);
-            }
-
+            doc.line(currentX, y + 1, currentX + textWidth, y + 1); // Draw underline
             currentX += textWidth;
+            return ""; // Remove processed text
+          });
 
-            // Remove the processed part from the line
-            line = line.slice(match.index + fullMatch.length);
-            regex.lastIndex = 0; // Reset regex index for the next match
-          }
+          // Process strikethrough text
+          remainingText = remainingText.replace(strikethroughRegex, (match, text) => {
+            doc.text(text, currentX, y);
+            const textWidth = doc.getTextWidth(text);
+            doc.line(currentX, y - 2, currentX + textWidth, y - 2); // Draw strikethrough
+            currentX += textWidth;
+            return ""; // Remove processed text
+          });
 
-          // Remaining text after the last match
-          if (line) {
-            doc.setFont("Times", "normal");
-            doc.text(line, currentX, y);
-            currentX += doc.getTextWidth(line);
+          // Render remaining normal text
+          if (remainingText) {
+            doc.text(remainingText, currentX, y);
+            currentX += doc.getTextWidth(remainingText);
           }
         };
 
-        // Process the line for each style
-        processLine(line, boldRegex, "bold");
-        processLine(line, italicRegex, "italic");
-        processLine(line, underlineRegex, "normal", true); // Underline requires a line
-        processLine(line, strikethroughRegex, "normal", true); // Strikethrough requires a line
+        // Process the current line
+        processStyledText(line);
 
-        y += 10; // Move to the next line
+        // Move to the next line
+        y += 10;
       });
     };
 
