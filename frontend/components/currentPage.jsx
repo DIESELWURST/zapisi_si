@@ -32,6 +32,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
     let newComponent;
     switch (type) {
       case "textBlock":
+        console.log("Adding text block");
         newComponent = { id: newComponents.length + 1, type: "textBlock", content: "New Text Block" };
         break;
       case "checklist":
