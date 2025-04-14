@@ -6,6 +6,8 @@ const Checklist = ({ items, setItems }) => {
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [showMenu, setShowMenu] = useState(false);
   const selectedTextRef = useRef("");
+  const dragItem = useRef(null); // Define dragItem as a ref
+  const dragOverItem = useRef(null); // Define dragOverItem as a ref
 
   const toggleCheck = (index) => {
     const newItems = [...items];
@@ -45,20 +47,20 @@ const Checklist = ({ items, setItems }) => {
   };
 
   const handleDragStart = (index) => {
-    dragItem.current = index;
+    dragItem.current = index; // Store the index of the dragged item
   };
 
   const handleDragEnter = (index) => {
-    dragOverItem.current = index;
+    dragOverItem.current = index; // Store the index of the item being dragged over
   };
 
   const handleDragEnd = () => {
     const newItems = [...items];
-    const draggedItem = newItems.splice(dragItem.current, 1)[0];
-    newItems.splice(dragOverItem.current, 0, draggedItem);
+    const draggedItem = newItems.splice(dragItem.current, 1)[0]; // Remove the dragged item
+    newItems.splice(dragOverItem.current, 0, draggedItem); // Insert it at the new position
     setItems(newItems);
-    dragItem.current = null;
-    dragOverItem.current = null;
+    dragItem.current = null; // Reset the ref
+    dragOverItem.current = null; // Reset the ref
   };
 
   return (
