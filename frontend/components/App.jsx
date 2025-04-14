@@ -140,124 +140,21 @@ const App = () => {
       console.error("No page selected for export.");
       return;
     }
-
     const doc = new jsPDF();
 
-    // Naslov strani
-    doc.setFont("Times");
-    doc.setFontSize(20);
-    doc.text(currentPage.title || "Untitled Page", 10, 10);
-
-
-    let yOffset = 35; 
-
-    // Funkcija za renderanje besedila brez html tagov
-    const renderStyledText = (html, x, y) => {
-      const lines = html.split("\n"); // Split the content into lines
-
-      lines.forEach((line) => {
-        let currentX = x;
-
-        // Recursive function to process styled text
-        const processStyledText = (text, x, y) => {
-          const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<strike>(.*?)<\/strike>|<sub>(.*?)<\/sub>|<sup>(.*?)<\/sup>/g;
-          let match;
-          let lastIndex = 0;
-
-          while ((match = styleRegex.exec(text)) !== null) {
-            const [fullMatch, boldText, italicText, underlineText, strikethroughText, subscriptText, superscriptText] = match;
-
-            // Render text before the current match
-            const beforeText = text.slice(lastIndex, match.index);
-            if (beforeText) {
-              doc.setFont("Times", "normal");
-              doc.text(beforeText, x, y);
-              x += doc.getTextWidth(beforeText);
-            }
-
-            // Render the styled text
-            if (boldText) {
-              doc.setFont("Times", "bold");
-              x = processStyledText(boldText, x, y); // Recursively process nested styles
-              doc.setFont("Times", "normal"); // Reset font
-            } else if (italicText) {
-              doc.setFont("Times", "italic");
-              x = processStyledText(italicText, x, y); // Recursively process nested styles
-              doc.setFont("Times", "normal"); // Reset font
-            } else if (underlineText) {
-              const startX = x;
-              x = processStyledText(underlineText, x, y); // Recursively process nested styles
-              doc.line(startX, y + 1, x, y + 1); // Draw underline
-            } else if (strikethroughText) {
-              const startX = x;
-              x = processStyledText(strikethroughText, x, y); // Recursively process nested styles
-              doc.line(startX, y - 2, x, y - 2); // Draw strikethrough
-            } else if (subscriptText) {
-              doc.setFont("Times", "normal");
-              doc.text(subscriptText, x, y + 3); // Subscript is rendered slightly lower
-              x += doc.getTextWidth(subscriptText);
-            } else if (superscriptText) {
-              doc.setFont("Times", "normal");
-              doc.text(superscriptText, x, y - 3); // Superscript is rendered slightly higher
-              x += doc.getTextWidth(superscriptText);
-            }
-
-            // Update the last index to the end of the current match
-            lastIndex = match.index + fullMatch.length;
-          }
-
-          // Render any remaining text after the last match
-          const remainingText = text.slice(lastIndex);
-          if (remainingText) {
-            doc.setFont("Times", "normal");
-            doc.text(remainingText, x, y);
-            x += doc.getTextWidth(remainingText);
-          }
-
-          return x; // Return the updated x position
-        };
-
-        // Process the current line
-        currentX = processStyledText(line, currentX, y);
-
-        // Move to the next line
-        y += 10;
-      });
-    };
-
-    // Add the page content
-    currentPage.content.forEach((component) => {
-      doc.setFontSize(14);
-
-      if (component.type === "textBlock") {
-        renderStyledText(component.content, 10, yOffset);
-        yOffset += 10;
-      } else if (component.type === "checklist") {
-        component.items.forEach((item) => {
-          // narišemo checkbox
-          doc.rect(20, yOffset - 4, 4, 4); // x, y, w, h
-
-          // Če je bil checked, narišemo kljukico
-          if (item.checked) {
-          // navpična črta
-            doc.line(21, yOffset - 2, 21, yOffset ); // x1, y1, x2, y2
-            // poševna črta
-            doc.line(21, yOffset , 24, yOffset -4); // x1, y1, x2, y2
-          }
-          renderStyledText(item.content, 30, yOffset);
-          yOffset += 10;
-        });
-      } else if (component.type === "toggleBlock") {
-        doc.setFont("Times", "bold");
-        doc.text(component.title, 10, yOffset);
-        yOffset += 10;
-        doc.setFont("Times", "normal");
-        renderStyledText(component.content, 20, yOffset);
-        yOffset += 10;
-      }
-    });
-    // Shranimo PDF
-    doc.save(`${currentPage.title || "Untitled_Page"}.pdf`);
+    doc.setFont("Times", "normal");
+    doc.text("This is normal text", 10, 10);
+    
+    doc.setFont("Times", "bold");
+    doc.text("This is bold text", 10, 20);
+    
+    doc.setFont("Times", "italic");
+    doc.text("This is italic text", 10, 30);
+    
+    doc.setFont("Times", "bolditalic");
+    doc.text("This is bold and italic text", 10, 40);
+    
+    doc.save("test.pdf");
   };
 
   const selectPage = (id) => {
