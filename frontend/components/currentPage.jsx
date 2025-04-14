@@ -59,6 +59,12 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
     setComponents(newComponents);
   };
 
+  const handleDeleteComponent = (index) => {
+    const newComponents = [...components];
+    newComponents.splice(index, 1);
+    setComponents(newComponents);
+  };
+
   const handleTitleChange = (e) => {
     if (!titleRef.current) return;
     
@@ -94,6 +100,23 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
               const newComponents = [...components];
               newComponents[index].content = newContent;
               setComponents(newComponents);
+            }}
+            onDelete={() => handleDeleteComponent(index)}
+            onFocusPrevious={() => {
+              if (index > 0) {
+                const previousComponent = document.querySelector(`[data-index="${index - 1}"] .text`);
+                if (previousComponent) {
+                  previousComponent.focus();
+
+                  // Place the cursor at the end of the previous component
+                  const range = document.createRange();
+                  const selection = window.getSelection();
+                  range.selectNodeContents(previousComponent);
+                  range.collapse(false);
+                  selection.removeAllRanges();
+                  selection.addRange(range);
+                }
+              }
             }}
             onDragStart={() => handleDragStart(index)}
             onDragEnter={() => handleDragEnter(index)}

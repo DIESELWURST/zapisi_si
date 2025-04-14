@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import Formater from "./Formater";
 import "../components/styles.css";
 
-const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onAddComponent }) => {
+const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onAddComponent, onDelete, onFocusPrevious }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const selectedTextRef = useRef("");
@@ -30,6 +30,11 @@ const TextBlock = ({ content, onUpdate, onDragStart, onDragEnter, onDragEnd, onA
     if (event.key === "Enter") {
       event.preventDefault(); // Onemogočimo Enter
       onAddComponent(); // Dodamo nov textBlock
+    }
+    if (event.key === "Backspace" && !content.trim()) {
+      event.preventDefault(); 
+      onDelete(); //zbrišemo komponento, če je ta prazna
+      onFocusPrevious(); // nato se cursor postavi na prejšnjo komponento
     }
   };
 
