@@ -158,7 +158,7 @@ const App = () => {
       lines.forEach((line) => {
         let currentX = x;
 
-        // Recursive function to process styled text
+        // Rekurzivna funkcija, ki omogoča več slogov naenkrat
         const processStyledText = (text, x, y, currentFont = "normal") => {
           const styleRegex = /<b>(.*?)<\/b>|<i>(.*?)<\/i>|<u>(.*?)<\/u>|<strike>(.*?)<\/strike>|<sub>(.*?)<\/sub>|<sup>(.*?)<\/sup>/g;
           let match;
@@ -167,7 +167,6 @@ const App = () => {
           while ((match = styleRegex.exec(text)) !== null) {
             const [fullMatch, boldText, italicText, underlineText, strikethroughText, subscriptText, superscriptText] = match;
 
-            // Render text before the current match
             const beforeText = text.slice(lastIndex, match.index);
             if (beforeText) {
               doc.setFont("Times", currentFont);
@@ -175,36 +174,34 @@ const App = () => {
               x += doc.getTextWidth(beforeText);
             }
 
-            // Render the styled text
+            // Renderanje teksta z ustreznim slogom
             if (boldText) {
               doc.setFont("Times", "bold");
-              x = processStyledText(boldText, x, y, "bold"); // Pass the current font style
+              x = processStyledText(boldText, x, y, "bold"); 
             } else if (italicText) {
               doc.setFont("Times", "italic");
-              x = processStyledText(italicText, x, y, "italic"); // Pass the current font style
+              x = processStyledText(italicText, x, y, "italic"); 
             } else if (underlineText) {
               const startX = x;
-              x = processStyledText(underlineText, x, y, currentFont); // Pass the current font style
-              doc.line(startX, y + 1, x, y + 1); // Draw underline
+              x = processStyledText(underlineText, x, y, currentFont); 
+              doc.line(startX, y + 1, x, y + 1); 
             } else if (strikethroughText) {
               const startX = x;
-              x = processStyledText(strikethroughText, x, y, currentFont); // Pass the current font style
-              doc.line(startX, y - 2, x, y - 2); // Draw strikethrough
+              x = processStyledText(strikethroughText, x, y, currentFont); 
+              doc.line(startX, y - 2, x, y - 2); 
             } else if (subscriptText) {
               doc.setFont("Times", currentFont);
-              doc.text(subscriptText, x, y + 3); // Subscript is rendered slightly lower
+              doc.text(subscriptText, x, y + 3); 
               x += doc.getTextWidth(subscriptText);
             } else if (superscriptText) {
               doc.setFont("Times", currentFont);
-              doc.text(superscriptText, x, y - 3); // Superscript is rendered slightly higher
+              doc.text(superscriptText, x, y - 3); 
               x += doc.getTextWidth(superscriptText);
             }
 
-            // Update the last index to the end of the current match
             lastIndex = match.index + fullMatch.length;
           }
 
-          // Render any remaining text after the last match
           const remainingText = text.slice(lastIndex);
           if (remainingText) {
             doc.setFont("Times", currentFont);
@@ -212,18 +209,18 @@ const App = () => {
             x += doc.getTextWidth(remainingText);
           }
 
-          return x; // Return the updated x position
+          return x; 
         };
 
-        // Process the current line
+       
         currentX = processStyledText(line, currentX, y);
 
-        // Move to the next line
+        
         y += 10;
       });
     };
 
-    // Add the page content
+
     currentPage.content.forEach((component) => {
       doc.setFontSize(14);
 
