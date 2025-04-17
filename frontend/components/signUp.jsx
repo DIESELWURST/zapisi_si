@@ -106,10 +106,10 @@ const SignUp = () => {
       return;
     }
 
-    // Hash the password before sending it to the backend
+    
     const hashedPassword = await hashPassword(password);
 
-    // Add new user to the database
+    
     try {
       const response = await fetch('https://backend-production-fbab.up.railway.app/api/add-user', {
         method: 'POST',

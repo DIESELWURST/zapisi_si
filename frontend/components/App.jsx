@@ -58,7 +58,7 @@ const App = () => {
   const fetchUserPages = async (userId) => {
     try {
       const response = await fetch(`https://backend-production-fbab.up.railway.app/api/user-pages?userId=${userId}`);
-      localStorage.setItem('userId', userId); // Store user ID in local storage
+      localStorage.setItem('userId', userId); 
       const data = await response.json();
       if (data.pages) {
         setPages(data.pages);
@@ -296,7 +296,7 @@ const App = () => {
     const currentPage = pages.find((page) => page.page_id === currentPageId);
     if (!currentPage) return;
 
-    // Ensure content is serialized to JSON string
+    
     const pageData = {
       ...currentPage,
       content: JSON.stringify(currentPage.content),

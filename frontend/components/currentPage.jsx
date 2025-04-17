@@ -108,7 +108,7 @@ const CurrentPage = ({ pageTitle, components, setComponents, setPageTitle }) => 
                 if (previousComponent) {
                   previousComponent.focus();
 
-                  // Place the cursor at the end of the previous component
+                  
                   const range = document.createRange();
                   const selection = window.getSelection();
                   range.selectNodeContents(previousComponent);

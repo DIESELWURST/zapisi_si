@@ -6,8 +6,8 @@ const Checklist = ({ items, setItems }) => {
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [showMenu, setShowMenu] = useState(false);
   const selectedTextRef = useRef("");
-  const dragItem = useRef(null); // Define dragItem as a ref
-  const dragOverItem = useRef(null); // Define dragOverItem as a ref
+  const dragItem = useRef(null); 
+  const dragOverItem = useRef(null); 
 
   const toggleCheck = (index) => {
     const newItems = [...items];
@@ -17,7 +17,7 @@ const Checklist = ({ items, setItems }) => {
 
   const handleTextChange = (index, event) => {
     const newItems = [...items];
-    newItems[index].content = event.target.innerHTML; // Save formatted HTML
+    newItems[index].content = event.target.innerHTML; // Shranimo formatiran HTML
     setItems(newItems);
   };
 
@@ -32,7 +32,7 @@ const Checklist = ({ items, setItems }) => {
   };
 
   const handleStyleClick = (style) => {
-    document.execCommand(style); // Apply the style
+    document.execCommand(style); 
     setShowMenu(false);
   };
 
@@ -47,20 +47,20 @@ const Checklist = ({ items, setItems }) => {
   };
 
   const handleDragStart = (index) => {
-    dragItem.current = index; // Store the index of the dragged item
+    dragItem.current = index; 
   };
 
   const handleDragEnter = (index) => {
-    dragOverItem.current = index; // Store the index of the item being dragged over
+    dragOverItem.current = index; 
   };
 
   const handleDragEnd = () => {
     const newItems = [...items];
-    const draggedItem = newItems.splice(dragItem.current, 1)[0]; // Remove the dragged item
-    newItems.splice(dragOverItem.current, 0, draggedItem); // Insert it at the new position
+    const draggedItem = newItems.splice(dragItem.current, 1)[0]; 
+    newItems.splice(dragOverItem.current, 0, draggedItem);
     setItems(newItems);
-    dragItem.current = null; // Reset the ref
-    dragOverItem.current = null; // Reset the ref
+    dragItem.current = null; 
+    dragOverItem.current = null; 
   };
 
   return (
@@ -97,9 +97,9 @@ const Checklist = ({ items, setItems }) => {
               className={`text checklist-text ${item.checked ? "completed" : ""}`}
               contentEditable
               suppressContentEditableWarning
-              onBlur={(event) => handleTextChange(index, event)} // Save changes on blur
-              onContextMenu={(e) => handleContextMenu(e, index)} // Show Formater on right-click
-              dangerouslySetInnerHTML={{ __html: item.content }} // Render saved HTML
+              onBlur={(event) => handleTextChange(index, event)} 
+              onContextMenu={(e) => handleContextMenu(e, index)} 
+              dangerouslySetInnerHTML={{ __html: item.content }} 
             />
           </li>
         ))}

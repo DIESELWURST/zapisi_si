@@ -28,13 +28,13 @@ connection.connect(err => {
   console.log('Connected to the MySQL database.');
 });
 
-// Configure SendGrid
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Generate OTP
+// Generiramo OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// Send verification code
+// Pošljemo verifikacijsko kodo
 const sendVerificationCode = async (email) => {
   const otp = generateOTP();
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
@@ -63,7 +63,7 @@ const sendVerificationCode = async (email) => {
   });
 };
 
-// Endpoint to check if a user exists by username
+// Endpoint za preverjanje že obstoječih uporabnikov
 app.get('/api/user-exists', (req, res) => {
   const username = req.query.username;
   if (!username) {
@@ -86,7 +86,7 @@ app.get('/api/user-exists', (req, res) => {
   });
 });
 
-// Endpoint to check if a user exists by email
+// Endpoint za preveranje že obstoječih emailov
 app.get('/api/mail-exists', (req, res) => {
   const mail = req.query.mail;
   if (!mail) {
@@ -109,7 +109,7 @@ app.get('/api/mail-exists', (req, res) => {
   });
 });
 
-// Endpoint to add a new user and create a default page
+// Endpoint, ki doda novega uporabnika ter mu doda privzeto stran
 app.post('/api/add-user', async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
@@ -117,7 +117,7 @@ app.post('/api/add-user', async (req, res) => {
   }
 
   try {
-    // Hash the password using argon2
+    // hashamo geslo z argon2
     const hashedPassword = await argon2.hash(password);
 
     const query = 'INSERT INTO User (username, email, password) VALUES (?, ?, ?)';
@@ -179,7 +179,44 @@ app.post('/api/add-user', async (req, res) => {
   }
 });
 
-// Endpoint to check user credentials
+app.post('/api/reset-password', async (req, res) => {
+  const { email, code, password } = req.body;
+  if (!email || !code || !password) {
+    return res.status(400).json({ error: 'Email, verification code, and new password are required' });
+  }
+
+  const query = 'SELECT verification_code, verification_expires FROM User WHERE email = ?';
+  connection.query(query, [email], async (err, results) => {
+    if (err) {
+      console.error('Error querying the database:', err);
+      return res.status(500).json({ error: 'Internal server error', details: err });
+    }
+
+    if (results.length === 0 || results[0].verification_code !== code || new Date() > new Date(results[0].verification_expires)) {
+      return res.status(400).json({ error: 'Invalid or expired verification code' });
+    }
+
+    try {
+      // Hashamo novo geslo z argon2
+      const hashedPassword = await argon2.hash(password);
+
+      const updateQuery = 'UPDATE User SET password = ?, verification_code = NULL, verification_expires = NULL WHERE email = ?';
+      connection.query(updateQuery, [hashedPassword, email], (err, updateResults) => {
+        if (err) {
+          console.error('Error updating user password:', err);
+          return res.status(500).json({ error: 'Internal server error', details: err });
+        }
+
+        return res.json({ message: 'Password reset successfully' });
+      });
+    } catch (error) {
+      console.error('Error hashing password:', error);
+      return res.status(500).json({ error: 'Internal server error', details: error });
+    }
+  });
+});
+
+// Endpoint za pregledovanje uporabniških podatkov
 app.get('/api/check-credentials', async (req, res) => {
   const credentials = req.query.credentials;
   const password = req.query.password;
@@ -218,7 +255,7 @@ app.get('/api/check-credentials', async (req, res) => {
   });
 });
 
-// Endpoint to fetch user pages
+// Endpoint, ki vrne vse uporabniške strani
 app.get('/api/user-pages', (req, res) => {
   const userId = req.query.userId;
   if (!userId) {
@@ -243,7 +280,7 @@ app.get('/api/user-pages', (req, res) => {
   });
 });
 
-// Endpoint to add a new page
+// Endpoint za dodajanje nove strani
 app.post('/api/add-page', (req, res) => {
   const { userId, title, content } = req.body;
   if (!userId || !title || !content) {
@@ -293,7 +330,7 @@ app.post('/api/delete-page', (req, res) => {
   });
 });
 
-// Endpoint to update a page
+// Endpoint za posodabljanje strani
 app.post('/api/update-page', (req, res) => {
   const { page_id, title, content, user_id } = req.body;
   if (!page_id || !title || !content || !user_id) {
@@ -343,7 +380,7 @@ app.post('/api/verify-email', (req, res) => {
 });
 
 
-// Endpoint to request OTP for password reset
+// Endoint zaprosi za OTP za ponastavitev gesla
 app.post('/api/request-reset-otp', (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -351,7 +388,7 @@ app.post('/api/request-reset-otp', (req, res) => {
   }
 
   const otp = generateOTP();
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minut
 
   const query = 'UPDATE User SET verification_code = ?, verification_expires = ? WHERE email = ?';
   connection.query(query, [otp, expiresAt, email], (err, results) => {
@@ -362,7 +399,7 @@ app.post('/api/request-reset-otp', (req, res) => {
 
     const msg = {
       to: email,
-      from: process.env.SENDGRID_SENDER, // Use the verified email address
+      from: process.env.SENDGRID_SENDER, 
       subject: 'Reset Your Password',
       text: `Your password reset code is: ${otp}`,
     };
@@ -379,43 +416,7 @@ app.post('/api/request-reset-otp', (req, res) => {
   });
 });
 
-// Endpoint to verify OTP and reset password
-app.post('/api/reset-password', async (req, res) => {
-  const { email, code, password } = req.body;
-  if (!email || !code || !password) {
-    return res.status(400).json({ error: 'Email, verification code, and new password are required' });
-  }
 
-  const query = 'SELECT verification_code, verification_expires FROM User WHERE email = ?';
-  connection.query(query, [email], async (err, results) => {
-    if (err) {
-      console.error('Error querying the database:', err);
-      return res.status(500).json({ error: 'Internal server error', details: err });
-    }
-
-    if (results.length === 0 || results[0].verification_code !== code || new Date() > new Date(results[0].verification_expires)) {
-      return res.status(400).json({ error: 'Invalid or expired verification code' });
-    }
-
-    try {
-      // Hash the new password using argon2
-      const hashedPassword = await argon2.hash(password);
-
-      const updateQuery = 'UPDATE User SET password = ?, verification_code = NULL, verification_expires = NULL WHERE email = ?';
-      connection.query(updateQuery, [hashedPassword, email], (err, updateResults) => {
-        if (err) {
-          console.error('Error updating user password:', err);
-          return res.status(500).json({ error: 'Internal server error', details: err });
-        }
-
-        return res.json({ message: 'Password reset successfully' });
-      });
-    } catch (error) {
-      console.error('Error hashing password:', error);
-      return res.status(500).json({ error: 'Internal server error', details: error });
-    }
-  });
-});
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

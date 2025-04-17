@@ -66,7 +66,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
 
       if (response.ok) {
         setOtpSent(true);
-        setResetStep(2); // Move to the next step
+        setResetStep(2); 
       } else {
         const data = await response.json();
         setOtpError(data.error);
@@ -80,7 +80,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
   const handleVerifyOtpAndResetPassword = async (event) => {
     event.preventDefault();
 
-    // Hash the new password before sending it to the backend
+    // Hashamo novo geslo pred pošiljanjem na backend
     const hashedNewPassword = await hashPassword(newPassword);
 
     try {
@@ -96,8 +96,8 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
         alert('Password reset successfully');
         setOtp('');
         setOtpError('');
-        setOtpSent(false); // Reset OTP sent state
-        setResetStep(1); // Reset to the initial step
+        setOtpSent(false); 
+        setResetStep(1);
       } else {
         const data = await response.json();
         setOtpError(data.error);

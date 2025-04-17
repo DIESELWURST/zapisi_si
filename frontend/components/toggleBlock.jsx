@@ -91,8 +91,8 @@ const ToggleBlock = ({
             className="text"
             contentEditable
             suppressContentEditableWarning
-            onBlur={handleTitleChange} // Save changes on blur
-            dangerouslySetInnerHTML={{ __html: title }} // Render saved HTML
+            onBlur={handleTitleChange} 
+            dangerouslySetInnerHTML={{ __html: title }} 
           />
         </div>
       </div>
@@ -119,8 +119,8 @@ const ToggleBlock = ({
               <span
                 contentEditable
                 suppressContentEditableWarning
-                onBlur={(event) => handleContentChange(event, index)} // Save changes on blur
-                dangerouslySetInnerHTML={{ __html: line }} // Render saved HTML
+                onBlur={(event) => handleContentChange(event, index)} 
+                dangerouslySetInnerHTML={{ __html: line }} 
               />
             </div>
           ))}
