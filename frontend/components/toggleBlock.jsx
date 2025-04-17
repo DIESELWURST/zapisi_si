@@ -35,7 +35,7 @@ const ToggleBlock = ({
 
   const handleContentChange = (event, lineIndex) => {
     const lines = content.split("\n");
-    lines[lineIndex] = event.target.innerHTML; // Save formatted HTML
+    lines[lineIndex] = event.target.innerHTML; 
     const updatedContent = lines.join("\n");
     onUpdate(updatedContent);
   };
